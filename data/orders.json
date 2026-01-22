@@ -1,0 +1,5 @@
+[
+  {"id": 1001, "user": "alice", "total": 19.99, "items": ["VPN Sticker", "Keychain"]},
+  {"id": 1002, "user": "bob", "total": 149.0, "items": ["Red Team Hoodie"]},
+  {"id": 1003, "user": "carol", "total": 9.99, "items": ["Badge"]}
+]

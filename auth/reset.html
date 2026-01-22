@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Password Reset Lab</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Pentest Toolkit</h1>
+      <div class="tagline">Password Reset</div>
+      <a class="home-link" href="/">← Home</a>
+      <div class="nav-group">
+        <h2>Auth</h2>
+        <a href="/auth/">Auth Index</a>
+        <a href="/auth/login.html">Login Lab</a>
+      </div>
+    </aside>
+    <main class="main">
+      <h2 class="section-title">AUTH-005 Password Reset Audit</h2>
+      <div class="lab">
+        <div>
+          <h3>Predictable Reset Tokens</h3>
+          <p>Reset tokens are based on user ID.</p>
+          <div class="notice mono">reset-1 | reset-2 | reset-3</div>
+        </div>
+        <div>
+          <form>
+            <div class="form-field">
+              <label for="token">Reset Token</label>
+              <input id="token" type="text" value="reset-1">
+            </div>
+            <button type="button" onclick="runReset()">Apply</button>
+          </form>
+          <div id="reset-output" class="notice mono" style="margin-top:8px">Awaiting token...</div>
+        </div>
+      </div>
+      <script>
+        function runReset() {
+          var token = document.getElementById('token').value;
+          fetch('/api/auth/reset', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: token })
+          })
+            .then(function (r) { return r.text(); })
+            .then(function (t) { document.getElementById('reset-output').textContent = t; });
+        }
+      </script>
+    </main>
+  </div>
+</body>
+</html>

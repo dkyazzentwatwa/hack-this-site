@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A04 - Insecure Design</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+  <script src="/assets/app.js"></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Pentest Toolkit</h1>
+      <div class="tagline">A04 - Insecure Design</div>
+      <a class="home-link" href="/">← Home</a>
+      <div class="nav-group">
+        <h2>OWASP</h2>
+        <a href="/owasp/">All OWASP</a>
+      </div>
+    </aside>
+    <main class="main">
+      <h2 class="section-title">A04 Labs</h2>
+      <div class="lab">
+        <div>
+          <h3>A04-001 Business Logic Tester</h3>
+          <p>Price and quantity can be manipulated client-side.</p>
+          <form>
+            <div class="form-field">
+              <label>Item price</label>
+              <input type="text" id="price" value="49.99">
+            </div>
+            <div class="form-field">
+              <label>Quantity</label>
+              <input type="number" id="qty" value="1">
+            </div>
+            <button type="button" onclick="document.getElementById('logic-output').textContent='Order total: $'+(Number(price.value)*Number(qty.value)).toFixed(2)">Calculate</button>
+          </form>
+        </div>
+        <div>
+          <div id="logic-output" class="notice mono">Order total: $49.99</div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

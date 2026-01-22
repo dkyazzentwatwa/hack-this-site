@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reflected XSS Lab</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+  <script src="/assets/app.js"></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Pentest Toolkit</h1>
+      <div class="tagline">Reflected XSS</div>
+      <a class="home-link" href="/">← Home</a>
+      <div class="nav-group">
+        <h2>Labs</h2>
+        <a href="/">Home</a>
+        <a href="/owasp/a03.html">A03 Injection</a>
+      </div>
+    </aside>
+    <main class="main">
+      <h2 class="section-title">A03-006 Reflected XSS (DOM)</h2>
+      <div class="lab">
+        <div>
+          <h3>Unsafe Reflection</h3>
+          <p>Input from the URL is written directly into the DOM.</p>
+          <div class="notice mono">Try: ?q=<img src=x onerror=alert(1)></div>
+          <div id="xss-output" class="notice mono" style="margin-top:8px">Output area...</div>
+          <button type="button" style="margin-top:8px" onclick="window.open('/api/reflect?q='+encodeURIComponent(document.getElementById('q').value))">Open /api/reflect</button>
+        </div>
+        <div>
+          <form>
+            <div class="form-field">
+              <label for="q">Query</label>
+              <input id="q" type="text" value="hello">
+            </div>
+            <button type="button" onclick="location.search='?q='+encodeURIComponent(document.getElementById('q').value)">Update URL</button>
+          </form>
+        </div>
+      </div>
+      <script>
+        var params = new URLSearchParams(location.search);
+        var q = params.get("q") || "(empty)";
+        // Intentionally unsafe sink
+        document.getElementById("xss-output").innerHTML = q;
+      </script>
+    </main>
+  </div>
+</body>
+</html>

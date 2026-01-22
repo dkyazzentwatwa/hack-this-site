@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A03 - Injection</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+  <script src="/assets/app.js"></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Pentest Toolkit</h1>
+      <div class="tagline">A03 - Injection</div>
+      <a class="home-link" href="/">← Home</a>
+      <div class="nav-group">
+        <h2>OWASP</h2>
+        <a href="/owasp/">All OWASP</a>
+        <a href="/labs/xss-reflected.html">Reflected XSS</a>
+        <a href="/labs/sqli-error.html">SQLi Error</a>
+      </div>
+    </aside>
+    <main class="main">
+      <h2 class="section-title">A03 Labs</h2>
+      <div class="lab">
+        <div>
+          <h3>A03-006 Reflected XSS</h3>
+          <p>URL input reflected into DOM sinks.</p>
+          <a class="label info" href="/labs/xss-reflected.html">Open lab</a>
+        </div>
+        <div>
+          <div class="notice mono">Try: ?q=<img src=x onerror=alert(1)></div>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>A03-001 SQL Injection (Error)</h3>
+          <p>Simulated SQL errors based on payload.</p>
+          <a class="label info" href="/labs/sqli-error.html">Open lab</a>
+        </div>
+        <div>
+          <div class="notice mono">Try: ' OR 1=1 --</div>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>A03-005 Command Injection</h3>
+          <p>Fake ping utility that echoes unsafe input.</p>
+          <form id="ping-form">
+            <div class="form-field">
+              <label for="host">Host</label>
+              <input id="host" name="host" type="text" value="127.0.0.1; whoami">
+            </div>
+            <button type="submit">Run</button>
+          </form>
+        </div>
+        <div>
+          <pre id="ping-output" class="notice mono">Output...</pre>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>UPLOAD-001 Extension Bypass</h3>
+          <p>Test file extension and MIME handling.</p>
+          <a class="label info" href="/labs/upload.html">Open Upload Lab</a>
+        </div>
+        <div>
+          <div class="notice mono">Try: shell.php.jpg</div>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>INPUT-001 Parameter Fuzzer</h3>
+          <p>Null bytes, double encoding, and CRLF checks.</p>
+          <a class="label info" href="/labs/input-validation.html">Open Validation Lab</a>
+        </div>
+        <div>
+          <div class="notice mono">Endpoint: /api/validate</div>
+        </div>
+      </div>
+      <script>
+        document.getElementById('ping-form').addEventListener('submit', function (e) {
+          e.preventDefault();
+          var host = document.getElementById('host').value;
+          fetch('/api/ping?host=' + encodeURIComponent(host))
+            .then(r => r.text())
+            .then(t => { document.getElementById('ping-output').textContent = t; });
+        });
+      </script>
+    </main>
+  </div>
+</body>
+</html>

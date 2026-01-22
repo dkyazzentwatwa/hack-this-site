@@ -1,0 +1,8 @@
+<definitions name="VulnerableService" targetNamespace="http://vulnerable-labs.local/wsdl">
+  <message name="GetUserRequest">
+    <part name="userId" type="xsd:string"/>
+  </message>
+  <message name="GetUserResponse">
+    <part name="user" type="xsd:string"/>
+  </message>
+</definitions>

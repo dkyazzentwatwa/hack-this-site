@@ -1,0 +1,3 @@
+DB_USER=admin
+DB_PASS=passw0rd!
+JWT_SECRET=weaksecret

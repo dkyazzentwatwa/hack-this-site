@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Security Headers Lab</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Pentest Toolkit</h1>
+      <div class="tagline">Security Headers</div>
+      <a class="home-link" href="/">← Home</a>
+      <div class="nav-group">
+        <h2>Labs</h2>
+        <a href="/">Home</a>
+        <a href="/owasp/a05.html">A05 Misconfig</a>
+      </div>
+    </aside>
+    <main class="main">
+      <h2 class="section-title">A05-001 Security Headers Audit</h2>
+      <div class="lab">
+        <div>
+          <h3>Missing Headers</h3>
+          <p>This page intentionally sets no security headers or CSP.</p>
+          <div class="notice mono">Expected missing: CSP, HSTS, X-Frame-Options, X-Content-Type-Options</div>
+          <button type="button" style="margin-top:8px" onclick="probeHeaders()">Call /api/headers</button>
+        </div>
+        <div>
+          <pre id="headers-output" class="notice mono">Output...</pre>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script>
+    function probeHeaders() {
+      fetch('/api/headers').then(function (r) { return r.text(); })
+        .then(function (t) { document.getElementById('headers-output').textContent = t; });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>REST API Labs</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+  <script src="/assets/app.js"></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Pentest Toolkit</h1>
+      <div class="tagline">REST API</div>
+      <a class="home-link" href="/">← Home</a>
+      <div class="nav-group">
+        <h2>API</h2>
+        <a href="/api-labs/">API Index</a>
+        <a href="/api-labs/graphql.html">GraphQL</a>
+        <a href="/api-labs/soap.html">SOAP</a>
+      </div>
+    </aside>
+    <main class="main">
+      <h2 class="section-title">REST API Targets</h2>
+      <div class="lab">
+        <div>
+          <h3>API-001 Endpoint Enumeration</h3>
+          <p>Known endpoints (intentionally discoverable):</p>
+          <div class="notice mono">/api/users | /api/orders | /api/admin | /api/search</div>
+        </div>
+        <div>
+          <div class="notice">Try crawling scripts for these strings.</div>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>API-002 BOLA/IDOR</h3>
+          <p>Orders API accepts any ID.</p>
+          <div class="notice mono">/api/orders/1001</div>
+        </div>
+        <div>
+          <a class="label info" href="/labs/idor.html">Open IDOR lab</a>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>API-005 Rate Limiting</h3>
+          <p>No rate limiting on this endpoint.</p>
+          <button type="button" onclick="hit('/api/rate-limit')">Run</button>
+        </div>
+        <div>
+          <pre id="rate-output" class="notice mono">Output...</pre>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>API-004 Mass Assignment</h3>
+          <p>Over-posting with role field (simulated).</p>
+          <button type="button" onclick="hit('/api/admin/users')">Fetch admin users</button>
+        </div>
+        <div>
+          <pre id="admin-output" class="notice mono">Output...</pre>
+        </div>
+      </div>
+      <script>
+        function hit(url) {
+          fetch(url).then(function (r) { return r.text(); }).then(function (t) {
+            if (url.indexOf('rate-limit') > -1) document.getElementById('rate-output').textContent = t;
+            if (url.indexOf('admin/users') > -1) document.getElementById('admin-output').textContent = t;
+          });
+        }
+      </script>
+    </main>
+  </div>
+</body>
+</html>

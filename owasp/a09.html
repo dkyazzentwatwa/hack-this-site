@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A09 - Logging Failures</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+  <script src="/assets/app.js"></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Pentest Toolkit</h1>
+      <div class="tagline">A09 - Logging</div>
+      <a class="home-link" href="/">← Home</a>
+      <div class="nav-group">
+        <h2>OWASP</h2>
+        <a href="/owasp/">All OWASP</a>
+      </div>
+    </aside>
+    <main class="main">
+      <h2 class="section-title">A09 Labs</h2>
+      <div class="lab">
+        <div>
+          <h3>A09-001 Sensitive Data in Errors</h3>
+          <p>Verbose error messages include stack traces and secrets.</p>
+          <div class="notice mono">Error: DB password = "passw0rd!"</div>
+        </div>
+        <div>
+          <div class="notice">Trigger a 404 to see verbose messages in console.</div>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>A09-002 Log Injection</h3>
+          <p>Log line injection via newline in input.</p>
+          <form id="log-form">
+            <div class="form-field">
+              <label for="logline">Log message</label>
+              <input id="logline" name="msg" type="text" value="user=alice\nrole=admin">
+            </div>
+            <button type="submit">Send</button>
+          </form>
+        </div>
+        <div>
+          <pre id="log-output" class="notice mono">Output...</pre>
+        </div>
+      </div>
+      <script>
+        document.getElementById('log-form').addEventListener('submit', function (e) {
+          e.preventDefault();
+          var msg = document.getElementById('logline').value;
+          fetch('/api/log', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ msg: msg })
+          }).then(function (r) { return r.text(); })
+            .then(function (t) { document.getElementById('log-output').textContent = t; });
+        });
+      </script>
+    </main>
+  </div>
+</body>
+</html>

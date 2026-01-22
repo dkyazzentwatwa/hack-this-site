@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A05 - Security Misconfiguration</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+  <script src="/assets/app.js"></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Pentest Toolkit</h1>
+      <div class="tagline">A05 - Misconfig</div>
+      <a class="home-link" href="/">← Home</a>
+      <div class="nav-group">
+        <h2>OWASP</h2>
+        <a href="/owasp/">All OWASP</a>
+        <a href="/labs/security-headers.html">Security Headers</a>
+        <a href="/labs/clickjacking.html">Clickjacking</a>
+      </div>
+    </aside>
+    <main class="main">
+      <h2 class="section-title">A05 Labs</h2>
+      <div class="lab">
+        <div>
+          <h3>A05-001 Security Headers Audit</h3>
+          <p>No CSP, no HSTS, no X-Frame-Options by default.</p>
+          <a class="label info" href="/labs/security-headers.html">Open lab</a>
+        </div>
+        <div>
+          <div class="notice mono">Use your header scanner on this page.</div>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>A05-004 Backup File Finder</h3>
+          <p>Exposed backup directory with sample files.</p>
+          <a class="label info" href="/backup/">Visit /backup/</a>
+        </div>
+        <div>
+          <div class="notice mono">Try: /backup/config.old</div>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>A05-006 CORS Misconfiguration</h3>
+          <p>Wildcard origin with credentials.</p>
+          <a class="label info" href="/labs/cors.html">Open CORS lab</a>
+        </div>
+        <div>
+          <div class="notice mono">Endpoint: /api/cors</div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

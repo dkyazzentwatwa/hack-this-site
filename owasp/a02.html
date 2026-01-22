@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A02 - Cryptographic Failures</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+  <script src="/assets/app.js"></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Pentest Toolkit</h1>
+      <div class="tagline">A02 - Crypto Failures</div>
+      <a class="home-link" href="/">← Home</a>
+      <div class="nav-group">
+        <h2>OWASP</h2>
+        <a href="/owasp/">All OWASP</a>
+        <a href="/utilities/">Utilities</a>
+      </div>
+    </aside>
+    <main class="main">
+      <h2 class="section-title">A02 Labs</h2>
+      <div class="lab">
+        <div>
+          <h3>A02-002 Secret Scanner</h3>
+          <p>Secrets in HTML, JS, comments, and global vars.</p>
+          <div class="notice mono">Found in: window.__SECRET_KEY__</div>
+          <a class="label info" href="/labs/secret-scanner.html">Open Secret Lab</a>
+        </div>
+        <div>
+          <div class="notice">Check inline scripts, comments, and storage.</div>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>A02-003 Weak Crypto Detector</h3>
+          <p>Sample hashes and base64 "encryption".</p>
+          <div class="notice mono">MD5: 5f4dcc3b5aa765d61d8327deb882cf99</div>
+        </div>
+        <div>
+          <div class="notice mono">Base64: cGFzc3dvcmQxMjM=</div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

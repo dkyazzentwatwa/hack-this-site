@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Input Validation Lab</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Pentest Toolkit</h1>
+      <div class="tagline">Input Validation</div>
+      <a class="home-link" href="/">Home</a>
+      <div class="nav-group">
+        <h2>Labs</h2>
+        <a href="/owasp/a03.html">A03 Injection</a>
+      </div>
+    </aside>
+    <main class="main">
+      <h2 class="section-title">INPUT-001 Parameter Fuzzer</h2>
+      <div class="lab">
+        <div>
+          <h3>Validation Simulator</h3>
+          <p>Submit payloads to detect weak validation.</p>
+          <div class="form-field">
+            <label for="input">Input</label>
+            <input id="input" type="text" value="%00%2e%2e%2f%252e%252e%252f">
+          </div>
+          <button type="button" onclick="validateInput()">Validate</button>
+        </div>
+        <div>
+          <pre id="validate-output" class="notice mono">Output...</pre>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script>
+    function validateInput() {
+      var input = document.getElementById('input').value;
+      fetch('/api/validate?input=' + encodeURIComponent(input))
+        .then(function (r) { return r.text(); })
+        .then(function (t) { document.getElementById('validate-output').textContent = t; });
+    }
+  </script>
+</body>
+</html>

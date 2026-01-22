@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CORS Lab</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Pentest Toolkit</h1>
+      <div class="tagline">CORS Misconfig</div>
+      <a class="home-link" href="/">Home</a>
+      <div class="nav-group">
+        <h2>Labs</h2>
+        <a href="/owasp/a05.html">A05 Misconfig</a>
+      </div>
+    </aside>
+    <main class="main">
+      <h2 class="section-title">A05-006 CORS Misconfiguration</h2>
+      <div class="lab">
+        <div>
+          <h3>Insecure CORS Endpoint</h3>
+          <p>Allows wildcard origin with credentials.</p>
+          <button type="button" onclick="checkCors()">Call /api/cors</button>
+        </div>
+        <div>
+          <pre id="cors-output" class="notice mono">Output...</pre>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script>
+    function checkCors() {
+      fetch('/api/cors')
+        .then(function (r) { return r.text(); })
+        .then(function (t) { document.getElementById('cors-output').textContent = t; });
+    }
+  </script>
+</body>
+</html>

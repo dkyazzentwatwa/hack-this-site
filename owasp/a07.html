@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A07 - Auth Failures</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+  <script src="/assets/app.js"></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Pentest Toolkit</h1>
+      <div class="tagline">A07 - Auth Failures</div>
+      <a class="home-link" href="/">← Home</a>
+      <div class="nav-group">
+        <h2>OWASP</h2>
+        <a href="/owasp/">All OWASP</a>
+        <a href="/auth/">Auth & Session</a>
+      </div>
+    </aside>
+    <main class="main">
+      <h2 class="section-title">A07 Labs</h2>
+      <div class="lab">
+        <div>
+          <h3>A07-002 Brute Force Tester</h3>
+          <p>Login form has no rate limiting or lockout.</p>
+          <a class="label info" href="/auth/login.html">Open login lab</a>
+        </div>
+        <div>
+          <div class="notice mono">Default creds: admin / admin123</div>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>A07-005 Password Reset Audit</h3>
+          <p>Password reset via predictable token.</p>
+          <a class="label info" href="/auth/reset.html">Open reset lab</a>
+        </div>
+        <div>
+          <div class="notice mono">Token pattern: reset-USERID</div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

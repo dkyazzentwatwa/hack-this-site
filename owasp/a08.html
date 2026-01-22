@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A08 - Integrity Failures</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+  <script src="/assets/app.js"></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Pentest Toolkit</h1>
+      <div class="tagline">A08 - Integrity</div>
+      <a class="home-link" href="/">← Home</a>
+      <div class="nav-group">
+        <h2>OWASP</h2>
+        <a href="/owasp/">All OWASP</a>
+      </div>
+    </aside>
+    <main class="main">
+      <h2 class="section-title">A08 Labs</h2>
+      <div class="lab">
+        <div>
+          <h3>A08-001 Deserialization Probe</h3>
+          <p>Serialized payloads stored in localStorage.</p>
+        </div>
+        <div>
+          <div class="notice mono">localStorage.key: user_profile_pickle</div>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>A08-002 Subresource Integrity</h3>
+          <p>External scripts intentionally lack SRI.</p>
+        </div>
+        <div>
+          <div class="notice mono">Check script tags on this page.</div>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>A08-003 Update Mechanism Audit</h3>
+          <p>Unsigned update manifest.</p>
+          <button type="button" onclick="fetchUpdate()">Call /api/update</button>
+        </div>
+        <div>
+          <pre id="update-output" class="notice mono">Output...</pre>
+        </div>
+      </div>
+      <script>
+        try { localStorage.setItem("user_profile_pickle", "gANjX19tYWluX18KQWRtaW4KcQAu"); } catch (e) {}
+        function fetchUpdate() {
+          fetch('/api/update').then(function (r) { return r.text(); })
+            .then(function (t) { document.getElementById('update-output').textContent = t; });
+        }
+      </script>
+    </main>
+  </div>
+</body>
+</html>

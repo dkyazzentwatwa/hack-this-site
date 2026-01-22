@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Clickjacking Lab</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Pentest Toolkit</h1>
+      <div class="tagline">Clickjacking</div>
+      <a class="home-link" href="/">← Home</a>
+      <div class="nav-group">
+        <h2>Labs</h2>
+        <a href="/">Home</a>
+        <a href="/owasp/a05.html">A05 Misconfig</a>
+      </div>
+    </aside>
+    <main class="main">
+      <h2 class="section-title">VULN-001 Clickjacking</h2>
+      <div class="lab">
+        <div>
+          <h3>No Clickjacking Protection</h3>
+          <p>There is no X-Frame-Options or CSP frame-ancestors.</p>
+          <div class="notice mono">Try framing this page in an iframe.</div>
+        </div>
+        <div>
+          <div class="notice">Your shortcut should report missing protections.</div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

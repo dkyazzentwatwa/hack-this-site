@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Deliberately vulnerable pentest training ground">
+  <meta name="author" content="Pentest Toolkit Lab">
+  <meta name="generator" content="StaticLab 0.1">
+  <meta name="robots" content="index,follow">
+  <meta name="keywords" content="pentest, training, owasp, lab">
+  <title>Pentest Toolkit Lab</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+  <script src="/assets/vendor/jquery-1.12.4.min.js"></script>
+  <script src="/assets/vendor/angular-1.6.9.min.js"></script>
+  <script src="/assets/app.js"></script>
+  <!-- TODO: Remove exposed test keys before production -->
+  <!-- SECRET: staging_admin_password=admin123 -->
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Pentest Toolkit</h1>
+      <div class="tagline">Deliberately vulnerable. Labeled labs for shortcuts.</div>
+      <a class="home-link" href="/">← Home</a>
+
+      <div class="nav-group">
+        <h2>Core</h2>
+        <a href="/">Home</a>
+        <a href="/recon/">Recon</a>
+        <a href="/owasp/">OWASP Top 10</a>
+        <a href="/platform/">Platform Specific</a>
+        <a href="/api-labs/">API Testing</a>
+        <a href="/auth/">Auth & Session</a>
+        <a href="/cms/">CMS Testing</a>
+        <a href="/quick/">Quick Scans</a>
+        <a href="/utilities/">Utilities</a>
+      </div>
+
+      <div class="nav-group">
+        <h2>Labs</h2>
+        <a href="/labs/xss-reflected.html">Reflected XSS</a>
+        <a href="/labs/sqli-error.html">SQLi Error</a>
+        <a href="/labs/idor.html">IDOR</a>
+        <a href="/labs/localstorage.html">Storage Leak</a>
+      </div>
+
+      <div class="nav-group">
+        <h2>Admin</h2>
+        <a href="/admin/">Admin Portal</a>
+        <a href="/backup/">Backups</a>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="hero">
+        <div>
+          <h2>Ultimate Vulnerable Pentest Site</h2>
+          <p>
+            This site is intentionally insecure and labeled for training. It contains obvious
+            vulnerabilities, exposed secrets, and weak controls so your mobile shortcuts can
+            validate detections quickly.
+          </p>
+          <div class="badges">
+            <span class="badge">Static + Vercel</span>
+            <span class="badge">200+ script targets</span>
+            <span class="badge">Tiered labs</span>
+            <span class="badge">Beginner friendly</span>
+          </div>
+        </div>
+        <div>
+          <div class="notice">
+            Warning: do not reuse this code outside of a lab environment. These pages are
+            intentionally vulnerable and unsafe.
+          </div>
+          <div class="notice" style="margin-top:10px">
+            Contact: security@vulnerable-labs.local | +1-415-555-0199
+          </div>
+        </div>
+      </section>
+
+      <h2 class="section-title">Tier 1 Labs (Priority)</h2>
+      <div class="grid">
+        <a class="card" href="/labs/xss-reflected.html">
+          <h3>A03-006 Reflected XSS</h3>
+          <p>DOM-based reflection with innerHTML sinks and URL inputs.</p>
+        </a>
+        <a class="card" href="/labs/sqli-error.html">
+          <h3>A03-001 SQLi Error</h3>
+          <p>Simulated SQL error messages based on payload patterns.</p>
+        </a>
+        <a class="card" href="/labs/idor.html">
+          <h3>A01-001 IDOR</h3>
+          <p>Direct object access by ID with no authorization.</p>
+        </a>
+        <a class="card" href="/labs/localstorage.html">
+          <h3>STORAGE-001 LocalStorage</h3>
+          <p>Seeds secrets into browser storage for audit scripts.</p>
+        </a>
+        <a class="card" href="/labs/secret-scanner.html">
+          <h3>A02-002 Secret Scanner</h3>
+          <p>Secrets embedded in comments, JS, and globals.</p>
+        </a>
+        <a class="card" href="/labs/git-exposure.html">
+          <h3>VULN-007 Git Exposure</h3>
+          <p>Exposed repository metadata for detection.</p>
+        </a>
+        <a class="card" href="/labs/env-file.html">
+          <h3>VULN-008 Env File Finder</h3>
+          <p>Environment file exposure artifacts.</p>
+        </a>
+        <a class="card" href="/labs/upload.html">
+          <h3>VULN-004 File Upload</h3>
+          <p>Extension and MIME bypass testing.</p>
+        </a>
+        <a class="card" href="/labs/cors.html">
+          <h3>A05-006 CORS Misconfig</h3>
+          <p>Wildcard origin with credentials.</p>
+        </a>
+        <a class="card" href="/labs/input-validation.html">
+          <h3>INPUT-001 Validation</h3>
+          <p>Null byte, double encoding, CRLF.</p>
+        </a>
+      </div>
+
+      <h2 class="section-title">Shortcut Target Zones</h2>
+      <div class="grid">
+        <a class="card" href="/recon/">
+          <h3>Recon Suites</h3>
+          <p>Passive + active recon artifacts across the UI.</p>
+        </a>
+        <a class="card" href="/owasp/">
+          <h3>OWASP Top 10</h3>
+          <p>All categories with labeled lab pages and stubs.</p>
+        </a>
+        <a class="card" href="/api-labs/">
+          <h3>API Testing</h3>
+          <p>REST, GraphQL, SOAP mock endpoints and UI.</p>
+        </a>
+        <a class="card" href="/utilities/">
+          <h3>Utilities</h3>
+          <p>Encoding, hashing, timestamp conversions, payload builder.</p>
+        </a>
+      </div>
+
+      <div class="footer">Build: static-lab 0.1 | Environment: development</div>
+
+      <div style="display:none">
+        <input type="hidden" name="debug" value="true">
+        <div id="hidden-banner">Hidden feature flag: betaCheckout=true</div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SQLi Error Lab</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+  <script src="/assets/app.js"></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Pentest Toolkit</h1>
+      <div class="tagline">SQLi Error</div>
+      <a class="home-link" href="/">← Home</a>
+      <div class="nav-group">
+        <h2>Labs</h2>
+        <a href="/">Home</a>
+        <a href="/owasp/a03.html">A03 Injection</a>
+      </div>
+    </aside>
+    <main class="main">
+      <h2 class="section-title">A03-001 SQL Injection (Error)</h2>
+      <div class="lab">
+        <div>
+          <h3>Unsafe Query Builder</h3>
+          <p>Simulated SQL error messages for common payloads.</p>
+          <form id="sqli-form">
+            <div class="form-field">
+              <label for="user">User ID</label>
+              <input id="user" type="text" value="1">
+            </div>
+            <button type="submit">Run Query</button>
+          </form>
+        </div>
+        <div>
+          <div id="sqli-output" class="notice mono">Query OK: SELECT * FROM users WHERE id = 1</div>
+        </div>
+      </div>
+      <script>
+        document.getElementById("sqli-form").addEventListener("submit", function (e) {
+          e.preventDefault();
+          var id = document.getElementById("user").value;
+          fetch("/api/sql?id=" + encodeURIComponent(id))
+            .then(function (r) { return r.text(); })
+            .then(function (t) { document.getElementById("sqli-output").textContent = t; });
+        });
+      </script>
+    </main>
+  </div>
+</body>
+</html>

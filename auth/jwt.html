@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JWT Lab</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+  <script src="/assets/app.js"></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Pentest Toolkit</h1>
+      <div class="tagline">JWT Tokens</div>
+      <a class="home-link" href="/">← Home</a>
+      <div class="nav-group">
+        <h2>Auth</h2>
+        <a href="/auth/">Auth Index</a>
+        <a href="/auth/session.html">Session Lab</a>
+      </div>
+    </aside>
+    <main class="main">
+      <h2 class="section-title">JWT Labs</h2>
+      <div class="lab">
+        <div>
+          <h3>JWT-001 Decoder</h3>
+          <p>Token stored in localStorage and visible below.</p>
+          <div class="notice mono" id="jwt-token">Loading token...</div>
+          <button type="button" style="margin-top:8px" onclick="decodeJwt()">Decode via API</button>
+        </div>
+        <div>
+          <div class="notice mono">Secret: weaksecret</div>
+          <pre id="jwt-output" class="notice mono" style="margin-top:8px">Decoded output...</pre>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>JWT-002 Algorithm Confusion</h3>
+          <p>Accepts alg=none (simulated).</p>
+        </div>
+        <div>
+          <div class="notice mono">Header: {"alg":"none"}</div>
+        </div>
+      </div>
+      <script>
+        var token = localStorage.getItem("auth_token") || "not found";
+        document.getElementById("jwt-token").textContent = token;
+        function decodeJwt() {
+          fetch("/api/jwt/decode", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token: token })
+          })
+            .then(function (r) { return r.text(); })
+            .then(function (t) { document.getElementById("jwt-output").textContent = t; });
+        }
+      </script>
+    </main>
+  </div>
+</body>
+</html>

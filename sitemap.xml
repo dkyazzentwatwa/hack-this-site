@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>/</loc></url>
+  <url><loc>/recon/</loc></url>
+  <url><loc>/owasp/</loc></url>
+  <url><loc>/platform/</loc></url>
+  <url><loc>/api-labs/</loc></url>
+  <url><loc>/api-labs/rest.html</loc></url>
+  <url><loc>/api-labs/graphql.html</loc></url>
+  <url><loc>/api-labs/soap.html</loc></url>
+  <url><loc>/auth/</loc></url>
+  <url><loc>/cms/</loc></url>
+  <url><loc>/quick/</loc></url>
+  <url><loc>/utilities/</loc></url>
+  <url><loc>/labs/xss-reflected.html</loc></url>
+  <url><loc>/labs/sqli-error.html</loc></url>
+  <url><loc>/labs/idor.html</loc></url>
+  <url><loc>/labs/localstorage.html</loc></url>
+  <url><loc>/labs/upload.html</loc></url>
+  <url><loc>/labs/cors.html</loc></url>
+  <url><loc>/labs/input-validation.html</loc></url>
+</urlset>

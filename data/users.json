@@ -1,0 +1,5 @@
+[
+  {"id": 1, "username": "admin", "role": "admin", "email": "admin@vulnerable-labs.local"},
+  {"id": 2, "username": "alice", "role": "user", "email": "alice@example.com"},
+  {"id": 3, "username": "bob", "role": "user", "email": "bob@example.com"}
+]

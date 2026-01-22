@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>API Testing Labs</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+  <script src="/assets/app.js"></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Pentest Toolkit</h1>
+      <div class="tagline">API Testing</div>
+      <a class="home-link" href="/">← Home</a>
+      <div class="nav-group">
+        <h2>API</h2>
+        <a href="/">Home</a>
+        <a href="/api-labs/rest.html">REST API</a>
+        <a href="/api-labs/graphql.html">GraphQL</a>
+        <a href="/api-labs/soap.html">SOAP/XML</a>
+      </div>
+    </aside>
+    <main class="main">
+      <h2 class="section-title">API Testing Labs</h2>
+      <div class="grid">
+        <a class="card" href="/api-labs/rest.html"><h3>REST API</h3><p>Endpoint enumeration, BOLA, rate limits.</p></a>
+        <a class="card" href="/api-labs/graphql.html"><h3>GraphQL</h3><p>Introspection, batching, depth limits.</p></a>
+        <a class="card" href="/api-labs/soap.html"><h3>SOAP/XML</h3><p>WSDL exposure, XXE.</p></a>
+      </div>
+      <div class="lab" style="margin-top:20px;">
+        <div>
+          <h3>Live API Console</h3>
+          <p>Quick probes for your shortcut tooling.</p>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button type="button" onclick="hitApi('/api/users')">/api/users</button>
+            <button type="button" onclick="hitApi('/api/orders')">/api/orders</button>
+            <button type="button" onclick="hitApi('/api/rate-limit')">/api/rate-limit</button>
+            <button type="button" onclick="hitApi('/api/cors')">/api/cors</button>
+          </div>
+        </div>
+        <div>
+          <pre id="api-output" class="notice mono">Output...</pre>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script>
+    function hitApi(url) {
+      fetch(url).then(function (r) { return r.text(); }).then(function (t) {
+        document.getElementById('api-output').textContent = t;
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login Lab</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+  <script src="/assets/app.js"></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Pentest Toolkit</h1>
+      <div class="tagline">Login Lab</div>
+      <a class="home-link" href="/">← Home</a>
+      <div class="nav-group">
+        <h2>Auth</h2>
+        <a href="/auth/">Auth Index</a>
+        <a href="/auth/reset.html">Reset Lab</a>
+      </div>
+    </aside>
+    <main class="main">
+      <h2 class="section-title">AUTH-001 Login Enumeration</h2>
+      <div class="lab">
+        <div>
+          <h3>Weak Login</h3>
+          <p>Different error messages for invalid user vs password.</p>
+          <form id="login-form">
+            <div class="form-field">
+              <label for="user">Username</label>
+              <input id="user" name="user" type="text" value="admin">
+            </div>
+            <div class="form-field">
+              <label for="pass">Password</label>
+              <input id="pass" name="pass" type="password" value="admin123">
+            </div>
+            <button type="submit">Login</button>
+          </form>
+        </div>
+        <div>
+          <div id="login-result" class="notice mono">Result: not submitted</div>
+          <div class="notice mono" style="margin-top:8px">Default creds: admin / admin123</div>
+        </div>
+      </div>
+      <script>
+        document.getElementById("login-form").addEventListener("submit", function (e) {
+          e.preventDefault();
+          var user = document.getElementById("user").value;
+          var pass = document.getElementById("pass").value;
+          fetch("/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user: user, pass: pass })
+          })
+            .then(function (r) { return r.text(); })
+            .then(function (t) { document.getElementById("login-result").textContent = "Result: " + t; });
+        });
+      </script>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SOAP/XML Labs</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Pentest Toolkit</h1>
+      <div class="tagline">SOAP/XML</div>
+      <a class="home-link" href="/">← Home</a>
+      <div class="nav-group">
+        <h2>API</h2>
+        <a href="/api-labs/">API Index</a>
+        <a href="/api-labs/rest.html">REST</a>
+        <a href="/api-labs/graphql.html">GraphQL</a>
+      </div>
+    </aside>
+    <main class="main">
+      <h2 class="section-title">SOAP Targets</h2>
+      <div class="lab">
+        <div>
+          <h3>SOAP-001 WSDL Finder</h3>
+          <p>WSDL file intentionally exposed.</p>
+          <div class="notice mono">/data/service.wsdl</div>
+        </div>
+        <div>
+          <div class="notice">SOAPAction header not validated.</div>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>SOAP Console</h3>
+          <p>Submit XML to the mock SOAP endpoint.</p>
+          <textarea id="soap-xml" rows="6"><request><userId>1</userId></request></textarea>
+          <button type="button" style="margin-top:8px" onclick="runSoap()">Send XML</button>
+        </div>
+        <div>
+          <pre id="soap-output" class="notice mono">Output...</pre>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script>
+    function runSoap() {
+      var xml = document.getElementById('soap-xml').value;
+      fetch('/api/soap', {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/xml' },
+        body: xml
+      })
+        .then(function (r) { return r.text(); })
+        .then(function (t) { document.getElementById('soap-output').textContent = t; });
+    }
+  </script>
+</body>
+</html>

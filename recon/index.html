@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="Recon lab">
+  <meta name="theme-color" content="#101522">
+  <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval'">
+  <title>Recon Lab</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+  <script src="/assets/app.js"></script>
+  <!-- RECON-003: HTML comments can leak internal URLs -->
+  <!-- /staging/backup.zip | /private/admin-bypass.html -->
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Pentest Toolkit</h1>
+      <div class="tagline">Recon suites</div>
+      <a class="home-link" href="/">← Home</a>
+      <div class="nav-group">
+        <h2>Shortcuts</h2>
+        <a href="/">Home</a>
+        <a href="/recon/">Recon</a>
+        <a href="/owasp/">OWASP Top 10</a>
+        <a href="/platform/">Platform Specific</a>
+        <a href="/api-labs/">API Testing</a>
+        <a href="/auth/">Auth & Session</a>
+        <a href="/cms/">CMS Testing</a>
+        <a href="/quick/">Quick Scans</a>
+        <a href="/utilities/">Utilities</a>
+      </div>
+    </aside>
+    <main class="main">
+      <h2 class="section-title">Recon Lab: Passive + Active</h2>
+      <div class="lab">
+        <div>
+          <h3>Recon Surface</h3>
+          <p>Deliberate signals for RECON-001 to RECON-020.</p>
+          <div class="badges">
+            <span class="label">RECON-001</span>
+            <span class="label">RECON-003</span>
+            <span class="label">RECON-004</span>
+            <span class="label">RECON-005</span>
+          </div>
+          <div class="notice" style="margin-top:10px">
+            Contact: recon@vulnerable-labs.local | +1-415-555-0142
+          </div>
+          <div class="notice" style="margin-top:10px">
+            Social: <a href="https://twitter.com/vulnerablelab">twitter.com/vulnerablelab</a> |
+            <a href="https://github.com/vulnerable-labs">github.com/vulnerable-labs</a>
+          </div>
+        </div>
+        <div>
+          <div class="notice mono">Hidden endpoint: /api/internal/metrics</div>
+        </div>
+      </div>
+
+      <div class="lab">
+        <div>
+          <h3>Active Recon Console</h3>
+          <p>Run live probes against serverless endpoints.</p>
+          <div class="badges">
+            <span class="label">RECON-011</span>
+            <span class="label">RECON-012</span>
+            <span class="label">RECON-014</span>
+            <span class="label">RECON-015</span>
+          </div>
+          <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+            <button type="button" onclick="runRecon('/api/headers')">Headers</button>
+            <button type="button" onclick="runRecon('/api/cookies')">Cookies</button>
+            <button type="button" onclick="runRecon('/api/methods', { method: 'OPTIONS' })">Methods</button>
+            <button type="button" onclick="runRecon('/api/error?code=500')">Error 500</button>
+          </div>
+        </div>
+        <div>
+          <pre id="recon-output" class="notice mono">Output will appear here.</pre>
+        </div>
+      </div>
+
+      <div class="lab">
+        <div>
+          <h3>Form Mapper</h3>
+          <p>Multiple forms, methods, hidden inputs.</p>
+          <form id="search-form">
+            <div class="form-field">
+              <label for="q">Search</label>
+              <input id="q" name="q" type="text" value="test">
+              <input type="hidden" name="debug" value="1">
+            </div>
+            <button type="submit">Search</button>
+          </form>
+        </div>
+        <div>
+          <form id="feedback-form">
+            <div class="form-field">
+              <label for="msg">Feedback</label>
+              <textarea id="msg" name="message" rows="4">Great site</textarea>
+            </div>
+            <button type="submit">Submit</button>
+          </form>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>Form Responses</h3>
+          <p>API responses for search and feedback.</p>
+        </div>
+        <div>
+          <pre id="form-output" class="notice mono">Output...</pre>
+        </div>
+      </div>
+
+      <div class="lab">
+        <div>
+          <h3>Hidden Elements</h3>
+          <p>RECON-010: Hidden inputs and display none elements.</p>
+          <div style="display:none">
+            <input type="text" name="adminOverride" value="enabled">
+            <a href="/admin/console">Admin Console</a>
+          </div>
+          <div hidden id="hidden-panel">Internal Feature: /beta/checkout</div>
+        </div>
+        <div>
+          <p class="notice">RECON-011/012: Inspect response headers and cookies.</p>
+        </div>
+      </div>
+
+      <div class="lab">
+        <div>
+          <h3>Script Analyzer Targets</h3>
+          <p>Inline + external scripts with API strings.</p>
+          <script>
+            // Inline script for recon tooling
+            var apiRoutes = ["/api/users", "/api/orders", "https://api.vulnerable-labs.local/v1/admin"]; 
+            var commentLeak = "TODO: remove /debug/trace";
+            document.getElementById("hidden-panel");
+          </script>
+        </div>
+        <div>
+          <a class="card" href="/labs/xss-reflected.html">
+            <h3>Go to XSS Lab</h3>
+            <p>DOM sinks and URL sources</p>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer">Recon lab intentionally reveals metadata and hidden fields.</div>
+      <script>
+        function runRecon(url, options) {
+          fetch(url, options || {}).then(r => r.text()).then(t => {
+            document.getElementById('recon-output').textContent = t;
+          }).catch(e => {
+            document.getElementById('recon-output').textContent = String(e);
+          });
+        }
+
+        document.getElementById('search-form').addEventListener('submit', function (e) {
+          e.preventDefault();
+          var q = document.getElementById('q').value;
+          fetch('/api/search?q=' + encodeURIComponent(q))
+            .then(r => r.text())
+            .then(t => { document.getElementById('form-output').textContent = t; });
+        });
+
+        document.getElementById('feedback-form').addEventListener('submit', function (e) {
+          e.preventDefault();
+          var msg = document.getElementById('msg').value;
+          fetch('/api/feedback', {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain' },
+            body: msg
+          }).then(r => r.text()).then(t => { document.getElementById('form-output').textContent = t; });
+        });
+      </script>
+    </main>
+  </div>
+</body>
+</html>

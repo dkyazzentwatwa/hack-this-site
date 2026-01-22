@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GraphQL Labs</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+  <script src="/assets/app.js"></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Pentest Toolkit</h1>
+      <div class="tagline">GraphQL</div>
+      <a class="home-link" href="/">← Home</a>
+      <div class="nav-group">
+        <h2>API</h2>
+        <a href="/api-labs/">API Index</a>
+        <a href="/api-labs/rest.html">REST</a>
+        <a href="/api-labs/soap.html">SOAP</a>
+      </div>
+    </aside>
+    <main class="main">
+      <h2 class="section-title">GraphQL Targets</h2>
+      <div class="lab">
+        <div>
+          <h3>GQL-001 Introspection Query</h3>
+          <p>Schema is exposed as JSON for testing.</p>
+          <div class="notice mono">/data/graphql-schema.json</div>
+        </div>
+        <div>
+          <div class="notice mono">/api/graphql (mock)</div>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>GQL-004 Depth Limit Test</h3>
+          <p>No query depth limit enforced.</p>
+        </div>
+        <div>
+          <div class="notice mono">Try recursive queries.</div>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>GraphQL Console</h3>
+          <p>Submit queries directly to the mock endpoint.</p>
+          <textarea id="gql-query" rows="6">{ __schema { types { name } } }</textarea>
+          <button type="button" style="margin-top:8px" onclick="runGql()">Send Query</button>
+        </div>
+        <div>
+          <pre id="gql-output" class="notice mono">Output...</pre>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script>
+    function runGql() {
+      var query = document.getElementById('gql-query').value;
+      fetch('/api/graphql', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: query })
+      })
+        .then(function (r) { return r.text(); })
+        .then(function (t) { document.getElementById('gql-output').textContent = t; });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Session Management Lab</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Pentest Toolkit</h1>
+      <div class="tagline">Session Management</div>
+      <a class="home-link" href="/">← Home</a>
+      <div class="nav-group">
+        <h2>Auth</h2>
+        <a href="/auth/">Auth Index</a>
+        <a href="/auth/jwt.html">JWT Lab</a>
+      </div>
+    </aside>
+    <main class="main">
+      <h2 class="section-title">SESSION Labs</h2>
+      <div class="lab">
+        <div>
+          <h3>SESSION-001 Session ID Analysis</h3>
+          <p>Predictable session ID format.</p>
+          <div class="notice mono">SID-00001, SID-00002, SID-00003</div>
+        </div>
+        <div>
+          <div id="session-output" class="notice mono">Cookie: session_id=SID-00001</div>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>SESSION-002 Session Fixation</h3>
+          <p>Session is not regenerated on login.</p>
+        </div>
+        <div>
+          <div class="notice mono">Set session before login and reuse.</div>
+        </div>
+      </div>
+      <script>
+        document.cookie = "session_id=SID-00001; path=/";
+        fetch("/api/auth/session")
+          .then(function (r) { return r.text(); })
+          .then(function (t) { document.getElementById("session-output").textContent = t; });
+      </script>
+    </main>
+  </div>
+</body>
+</html>

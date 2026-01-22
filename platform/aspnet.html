@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ASP.NET / IIS Labs</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Pentest Toolkit</h1>
+      <div class="tagline">ASP.NET / IIS</div>
+      <a class="home-link" href="/">← Home</a>
+      <div class="nav-group">
+        <h2>Platform</h2>
+        <a href="/platform/">Platform Index</a>
+      </div>
+    </aside>
+    <main class="main">
+      <h2 class="section-title">ASP.NET / IIS Targets</h2>
+      <div class="lab">
+        <div>
+          <h3>ASPNET-001 ViewState Analyzer</h3>
+          <p>Simulated ViewState input.</p>
+          <input type="text" value="/wEPDwUKLTI0MzI1NzA3NQ9kFgJmD2QWAgIDD2QWAgIBD2QWAgIBD2QWAgIBD2Q=" />
+        </div>
+        <div>
+          <div class="notice mono">Endpoint: /api/platform/aspnet</div>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>ASPNET-005 web.config Probe</h3>
+          <p>Exposed config sample:</p>
+          <div class="notice mono">/backup/web.config.bak</div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Env File Exposure Lab</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Pentest Toolkit</h1>
+      <div class="tagline">Env Exposure</div>
+      <a class="home-link" href="/">← Home</a>
+      <div class="nav-group">
+        <h2>Labs</h2>
+        <a href="/">Home</a>
+        <a href="/owasp/a05.html">A05 Misconfig</a>
+      </div>
+    </aside>
+    <main class="main">
+      <h2 class="section-title">VULN-008 Environment File Finder</h2>
+      <div class="lab">
+        <div>
+          <h3>Exposed Environment Data</h3>
+          <p>Config and env data are exposed.</p>
+          <div class="notice mono">/.env</div>
+        </div>
+        <div>
+          <div class="notice">If Vercel blocks dotfiles, use /backup/config.old.</div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

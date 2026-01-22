@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IDOR Lab</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+  <script src="/assets/app.js"></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Pentest Toolkit</h1>
+      <div class="tagline">IDOR</div>
+      <a class="home-link" href="/">← Home</a>
+      <div class="nav-group">
+        <h2>Labs</h2>
+        <a href="/">Home</a>
+        <a href="/owasp/a01.html">A01 Access Control</a>
+      </div>
+    </aside>
+    <main class="main">
+      <h2 class="section-title">A01-001 IDOR Scanner</h2>
+      <div class="lab">
+        <div>
+          <h3>Order Lookup</h3>
+          <p>No authorization checks. Change the order id.</p>
+          <form>
+            <div class="form-field">
+              <label for="order">Order ID</label>
+              <input id="order" type="text" value="1001">
+            </div>
+            <button type="button" onclick="loadOrder()">Load Order</button>
+          </form>
+        </div>
+        <div>
+          <div id="order-output" class="notice mono">Order data will appear here.</div>
+        </div>
+      </div>
+      <script>
+        function loadOrder() {
+          var id = document.getElementById("order").value;
+          fetch("/api/orders/" + encodeURIComponent(id))
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+              document.getElementById("order-output").textContent = JSON.stringify(data, null, 2);
+            });
+        }
+        var params = new URLSearchParams(location.search);
+        if (params.get("order")) {
+          document.getElementById("order").value = params.get("order");
+          loadOrder();
+        }
+      </script>
+    </main>
+  </div>
+</body>
+</html>

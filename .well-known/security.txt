@@ -1,0 +1,3 @@
+Contact: mailto:security@vulnerable-labs.local
+Expires: 2099-12-31T23:59:59Z
+Policy: /security-policy.html

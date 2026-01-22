@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A01 - Broken Access Control</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+  <script src="/assets/app.js"></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Pentest Toolkit</h1>
+      <div class="tagline">A01 - Access Control</div>
+      <a class="home-link" href="/">← Home</a>
+      <div class="nav-group">
+        <h2>OWASP</h2>
+        <a href="/owasp/">All OWASP</a>
+        <a href="/labs/idor.html">IDOR Lab</a>
+      </div>
+    </aside>
+    <main class="main">
+      <h2 class="section-title">A01 Labs</h2>
+      <div class="lab">
+        <div>
+          <h3>A01-001 IDOR Scanner</h3>
+          <p>Try changing the id parameter to access another user's order.</p>
+          <a class="label info" href="/labs/idor.html">Open lab</a>
+        </div>
+        <div>
+          <div class="notice mono">Example: /labs/idor.html?order=1002</div>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>A01-002 Privilege Escalation Probe</h3>
+          <p>Admin endpoints are exposed without auth.</p>
+        </div>
+        <div>
+          <div class="notice mono">/admin/console | /admin/users</div>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>A01-003 Path Traversal Tester</h3>
+          <p>Simulated file path input for traversal tests.</p>
+          <form id="path-form">
+            <div class="form-field">
+              <label for="path">File path</label>
+              <input id="path" name="path" type="text" value="../../etc/passwd">
+            </div>
+            <button type="submit">Fetch</button>
+          </form>
+        </div>
+        <div>
+          <pre id="path-output" class="notice mono">Output...</pre>
+        </div>
+      </div>
+      <script>
+        document.getElementById('path-form').addEventListener('submit', function (e) {
+          e.preventDefault();
+          var path = document.getElementById('path').value;
+          fetch('/api/files?path=' + encodeURIComponent(path))
+            .then(r => r.text())
+            .then(t => { document.getElementById('path-output').textContent = t; });
+        });
+      </script>
+    </main>
+  </div>
+</body>
+</html>

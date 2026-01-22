@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Node.js / Express Labs</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Pentest Toolkit</h1>
+      <div class="tagline">Node.js / Express</div>
+      <a class="home-link" href="/">← Home</a>
+      <div class="nav-group">
+        <h2>Platform</h2>
+        <a href="/platform/">Platform Index</a>
+      </div>
+    </aside>
+    <main class="main">
+      <h2 class="section-title">Node Targets</h2>
+      <div class="lab">
+        <div>
+          <h3>NODE-001 package.json Finder</h3>
+          <p>Exposed package file.</p>
+          <div class="notice mono">/api/platform/node</div>
+        </div>
+        <div>
+          <h3>NODE-002 Prototype Pollution</h3>
+          <p>Try injecting __proto__ or constructor in JSON.</p>
+          <div class="notice mono">{"__proto__":{"admin":true}}</div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

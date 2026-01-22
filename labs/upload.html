@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>File Upload Lab</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Pentest Toolkit</h1>
+      <div class="tagline">File Upload</div>
+      <a class="home-link" href="/">Home</a>
+      <div class="nav-group">
+        <h2>Labs</h2>
+        <a href="/owasp/a03.html">A03 Injection</a>
+      </div>
+    </aside>
+    <main class="main">
+      <h2 class="section-title">VULN-004 File Upload</h2>
+      <div class="lab">
+        <div>
+          <h3>Upload Simulator</h3>
+          <p>Test extension, MIME, and path traversal validation.</p>
+          <div class="form-field">
+            <label for="filename">Filename</label>
+            <input id="filename" type="text" value="shell.php.jpg">
+          </div>
+          <div class="form-field">
+            <label for="contentType">Content-Type</label>
+            <input id="contentType" type="text" value="image/png">
+          </div>
+          <div class="form-field">
+            <label for="data">Content (base64/plain)</label>
+            <textarea id="data" rows="4">PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg==</textarea>
+          </div>
+          <button type="button" onclick="upload()">Upload</button>
+        </div>
+        <div>
+          <pre id="upload-output" class="notice mono">Output...</pre>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script>
+    function upload() {
+      var payload = {
+        filename: document.getElementById('filename').value,
+        contentType: document.getElementById('contentType').value,
+        data: document.getElementById('data').value
+      };
+      fetch('/api/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+        .then(function (r) { return r.text(); })
+        .then(function (t) { document.getElementById('upload-output').textContent = t; });
+    }
+  </script>
+</body>
+</html>

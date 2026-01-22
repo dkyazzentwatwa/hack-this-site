@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Storage Leak Lab</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+  <script src="/assets/app.js"></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Pentest Toolkit</h1>
+      <div class="tagline">Storage Audit</div>
+      <a class="home-link" href="/">← Home</a>
+      <div class="nav-group">
+        <h2>Labs</h2>
+        <a href="/">Home</a>
+        <a href="/recon/">Recon</a>
+      </div>
+    </aside>
+    <main class="main">
+      <h2 class="section-title">STORAGE-001 LocalStorage Audit</h2>
+      <div class="lab">
+        <div>
+          <h3>Seeded Storage</h3>
+          <p>LocalStorage and sessionStorage contain sensitive values.</p>
+          <button type="button" onclick="dumpStorage()">Dump Storage</button>
+        </div>
+        <div>
+          <pre id="storage-output" class="notice mono">Click dump to view storage data.</pre>
+        </div>
+      </div>
+      <script>
+        function dumpStorage() {
+          var data = { localStorage: {}, sessionStorage: {} };
+          for (var i = 0; i < localStorage.length; i++) {
+            var key = localStorage.key(i);
+            data.localStorage[key] = localStorage.getItem(key);
+          }
+          for (var j = 0; j < sessionStorage.length; j++) {
+            var k = sessionStorage.key(j);
+            data.sessionStorage[k] = sessionStorage.getItem(k);
+          }
+          document.getElementById("storage-output").textContent = JSON.stringify(data, null, 2);
+        }
+      </script>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "__schema": {
+    "queryType": { "name": "Query" },
+    "mutationType": { "name": "Mutation" },
+    "types": [
+      { "name": "Query", "fields": [
+        { "name": "user", "args": [{"name": "id", "type": "ID"}] },
+        { "name": "orders", "args": [] }
+      ]},
+      { "name": "Mutation", "fields": [
+        { "name": "updateRole", "args": [{"name": "id", "type": "ID"}, {"name": "role", "type": "String"}] }
+      ]}
+    ]
+  }
+}

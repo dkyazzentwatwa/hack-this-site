@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ruby / Rails Labs</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Pentest Toolkit</h1>
+      <div class="tagline">Ruby / Rails</div>
+      <a class="home-link" href="/">← Home</a>
+      <div class="nav-group">
+        <h2>Platform</h2>
+        <a href="/platform/">Platform Index</a>
+      </div>
+    </aside>
+    <main class="main">
+      <h2 class="section-title">Ruby Targets</h2>
+      <div class="lab">
+        <div>
+          <h3>RUBY-002 Mass Assignment</h3>
+          <p>Over-posting allowed for role fields.</p>
+          <div class="notice mono">role=admin</div>
+        </div>
+        <div>
+          <h3>RUBY-005 Rails Secret Finder</h3>
+          <p>Exposed secret:</p>
+          <div class="notice mono">/api/platform/ruby</div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

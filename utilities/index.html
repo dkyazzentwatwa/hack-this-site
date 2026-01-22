@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Utilities</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>Pentest Toolkit</h1>
+      <div class="tagline">Utilities</div>
+      <a class="home-link" href="/">← Home</a>
+      <div class="nav-group">
+        <h2>Tools</h2>
+        <a href="/">Home</a>
+        <a href="/utilities/">Utilities</a>
+      </div>
+    </aside>
+    <main class="main">
+      <h2 class="section-title">Utilities</h2>
+      <div class="lab">
+        <div>
+          <h3>UTIL-004 Encoding Helper</h3>
+          <p>URL and Base64 encoders.</p>
+          <div class="form-field">
+            <label for="encode-input">Input</label>
+            <input id="encode-input" type="text" value="<script>alert(1)</script>">
+          </div>
+          <button type="button" onclick="document.getElementById('encode-output').textContent=encodeURIComponent(document.getElementById('encode-input').value)">URL Encode</button>
+          <button type="button" onclick="document.getElementById('encode-output').textContent=btoa(document.getElementById('encode-input').value)">Base64 Encode</button>
+        </div>
+        <div>
+          <div id="encode-output" class="notice mono">Output...</div>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>UTIL-006 Timestamp Converter</h3>
+          <p>Convert Unix timestamp to ISO.</p>
+          <div class="form-field">
+            <label for="ts">Timestamp</label>
+            <input id="ts" type="text" value="1700000000">
+          </div>
+          <button type="button" onclick="document.getElementById('ts-output').textContent=new Date(Number(document.getElementById('ts').value)*1000).toISOString()">Convert</button>
+        </div>
+        <div>
+          <div id="ts-output" class="notice mono">Output...</div>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>UTIL-005 Hash Generator</h3>
+          <p>Generate MD5, SHA1, SHA256 via serverless endpoint.</p>
+          <div class="form-field">
+            <label for="hash-input">Input</label>
+            <input id="hash-input" type="text" value="password123">
+          </div>
+          <button type="button" onclick="hashInput()">Generate</button>
+        </div>
+        <div>
+          <pre id="hash-output" class="notice mono">Output...</pre>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script>
+    function hashInput() {
+      var input = document.getElementById('hash-input').value;
+      fetch('/api/hash', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ input: input })
+      })
+        .then(function (r) { return r.text(); })
+        .then(function (t) { document.getElementById('hash-output').textContent = t; });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /backup/
+Disallow: /staging/
+Disallow: /private/
+Disallow: /.env
+Sitemap: /sitemap.xml
