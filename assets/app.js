@@ -42,3 +42,44 @@ window.evalUserCode = function (code) {
   return eval(code); // Intentionally unsafe for testing
 };
 //# sourceMappingURL=/assets/app.js.map
+
+function attachLabTooltips() {
+  var blocks = document.querySelectorAll('.lab, .card');
+  blocks.forEach(function (block) {
+    var title = block.querySelector('h3');
+    var desc = block.querySelector('p') || block.querySelector('.notice');
+    if (!title || !desc) return;
+    if (title.querySelector('.info-tip')) return;
+    var text = (desc.textContent || '').trim();
+    if (!text) return;
+    var tip = document.createElement('span');
+    tip.className = 'info-tip';
+    tip.setAttribute('data-tip', text);
+    tip.setAttribute('aria-label', text);
+    tip.textContent = 'Info';
+    tip.tabIndex = 0;
+    tip.addEventListener('click', function (e) {
+      e.stopPropagation();
+      tip.classList.toggle('is-open');
+    });
+    tip.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        tip.classList.toggle('is-open');
+      }
+    });
+    title.appendChild(tip);
+  });
+}
+
+document.addEventListener('click', function () {
+  document.querySelectorAll('.info-tip.is-open').forEach(function (el) {
+    el.classList.remove('is-open');
+  });
+});
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', attachLabTooltips);
+} else {
+  attachLabTooltips();
+}
