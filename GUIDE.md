@@ -9,7 +9,7 @@ This site is intentionally insecure so students and practitioners can **practice
 - Understand how common vulnerabilities appear in HTML, JS, headers, storage, and endpoints.
 - Practice identifying vulnerabilities with manual inspection and automated shortcuts.
 - Build a mental model for recon → identify → validate → report.
-
+  d
 ## How to Use This Lab
 
 1. **Start with Recon** (`/recon/`) to practice passive and active discovery.
