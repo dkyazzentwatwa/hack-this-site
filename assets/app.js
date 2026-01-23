@@ -89,6 +89,16 @@ function setupSidebarToggle() {
   if (!sidebar) return;
   var body = document.body;
 
+  if (!sidebar.hasAttribute('data-resource-skip') && !sidebar.querySelector('a[href=\"/resource/\"]')) {
+    var navGroup = sidebar.querySelector('.nav-group');
+    if (navGroup) {
+      var resourceLink = document.createElement('a');
+      resourceLink.href = '/resource/';
+      resourceLink.textContent = 'Resource Hub';
+      navGroup.appendChild(resourceLink);
+    }
+  }
+
   if (!sidebar.querySelector('.sidebar-toggle')) {
     var btn = document.createElement('button');
     btn.className = 'sidebar-toggle';

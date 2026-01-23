@@ -6,6 +6,7 @@ This repo is a static, intentionally vulnerable training site. Key paths:
 
 - `index.html` — landing page
 - `home/` — main testing hub and navigation
+- `resource/` — resource hub and learning guidance
 - `assets/` — shared CSS/JS (`styles.css`, `app.js`, vendor libs)
 - `labs/` — hands-on vulnerability labs (e.g., `labs/xss-reflected.html`)
 - `owasp/`, `recon/`, `auth/`, `api/`, `platform/`, `cms/`, `utilities/` — category pages

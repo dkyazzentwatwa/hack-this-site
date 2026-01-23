@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Resource Hub - VulnLab Academy</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <script src="/assets/app.js"></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar" data-resource-skip="true">
+      <h1>Pentest Toolkit</h1>
+      <div class="tagline">Learning resources and guidance.</div>
+      <a class="home-link" href="/home/">← Labs Home</a>
+      <div class="nav-group">
+        <h2>Jump To</h2>
+        <a href="#start">Getting Started</a>
+        <a href="#recon">Recon</a>
+        <a href="#owasp">OWASP Top 10</a>
+        <a href="#api">API Security</a>
+        <a href="#auth">Auth & Session</a>
+        <a href="#client">Client-Side</a>
+        <a href="#platform">Platform & CMS</a>
+        <a href="#logic">Business Logic</a>
+        <a href="#utilities">Utilities & Reporting</a>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="hero" id="start">
+        <div>
+          <h2>Resource Hub</h2>
+          <p>
+            This page explains the purpose of each lab area, what to look for, and how to practice safely.
+            Everything here maps to the labs in the site and your mobile shortcuts.
+          </p>
+          <div class="badges">
+            <span class="badge">Beginner Friendly</span>
+            <span class="badge">Shortcut Ready</span>
+            <span class="badge">Hands-On</span>
+            <span class="badge">OWASP-Aligned</span>
+          </div>
+        </div>
+        <div>
+          <div class="notice">
+            All labs are intentionally vulnerable. Use this only for training.
+          </div>
+          <div class="notice" style="margin-top:10px">
+            Suggested flow: Recon → OWASP → Auth → API → Client-Side → Platform/CMS.
+          </div>
+        </div>
+      </section>
+
+      <h2 class="section-title">How To Use The Labs</h2>
+      <div class="lab">
+        <div>
+          <h3>Learning Path</h3>
+          <p>Start with recon, then validate findings with specific labs and endpoints.</p>
+          <div class="notice mono">1) Discover → 2) Verify → 3) Record → 4) Report</div>
+        </div>
+        <div>
+          <div class="notice">Tip: run your shortcuts on each section page first, then drill into labs.</div>
+        </div>
+      </div>
+
+      <h2 class="section-title" id="recon">Reconnaissance</h2>
+      <div class="lab">
+        <div>
+          <h3>Passive Recon</h3>
+          <p>Learn how to extract metadata, comments, links, and hidden elements.</p>
+          <div class="notice mono">Targets: /recon/, HTML comments, meta tags, hidden inputs.</div>
+        </div>
+        <div>
+          <a class="label info" href="/recon/">Open Recon Lab</a>
+          <div class="notice">Look for: contact info, API endpoints, CMS hints.</div>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>Active Recon</h3>
+          <p>Inspect headers, cookies, error messages, methods, and robots/sitemap.</p>
+          <div class="notice mono">Endpoints: /api/headers, /api/cookies, /api/methods</div>
+        </div>
+        <div>
+          <div class="notice">What to learn: server fingerprints and security header gaps.</div>
+        </div>
+      </div>
+
+      <h2 class="section-title" id="owasp">OWASP Top 10 (2021)</h2>
+      <div class="lab">
+        <div>
+          <h3>A01 Broken Access Control</h3>
+          <p>IDOR and forced browsing. Try changing IDs and accessing admin pages.</p>
+          <div class="notice mono">Labs: /labs/idor.html, /admin/</div>
+        </div>
+        <div>
+          <a class="label info" href="/owasp/a01.html">Open A01</a>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>A02 Cryptographic Failures</h3>
+          <p>Find exposed secrets and weak hash usage.</p>
+          <div class="notice mono">Labs: /labs/secret-scanner.html, /utilities/</div>
+        </div>
+        <div>
+          <a class="label info" href="/owasp/a02.html">Open A02</a>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>A03 Injection</h3>
+          <p>Reflected XSS, SQLi errors, command injection (simulated).</p>
+          <div class="notice mono">Labs: /labs/xss-reflected.html, /labs/sqli-error.html</div>
+        </div>
+        <div>
+          <a class="label info" href="/owasp/a03.html">Open A03</a>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>A05 Security Misconfiguration</h3>
+          <p>Missing headers, exposed backups, CORS mistakes.</p>
+          <div class="notice mono">Labs: /labs/security-headers.html, /backup/</div>
+        </div>
+        <div>
+          <a class="label info" href="/owasp/a05.html">Open A05</a>
+        </div>
+      </div>
+
+      <h2 class="section-title" id="api">API Security</h2>
+      <div class="lab">
+        <div>
+          <h3>REST API</h3>
+          <p>Endpoint enumeration, BOLA/IDOR, missing rate limits.</p>
+          <div class="notice mono">Endpoints: /api/users, /api/orders, /api/rate-limit</div>
+        </div>
+        <div>
+          <a class="label info" href="/api-labs/rest.html">Open REST Labs</a>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>GraphQL</h3>
+          <p>Introspection exposure and query depth testing.</p>
+          <div class="notice mono">Endpoint: /api/graphql</div>
+        </div>
+        <div>
+          <a class="label info" href="/api-labs/graphql.html">Open GraphQL Labs</a>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>SOAP/XML</h3>
+          <p>WSDL exposure and XXE simulation.</p>
+          <div class="notice mono">Endpoint: /api/soap</div>
+        </div>
+        <div>
+          <a class="label info" href="/api-labs/soap.html">Open SOAP Labs</a>
+        </div>
+      </div>
+
+      <h2 class="section-title" id="auth">Authentication & Session</h2>
+      <div class="lab">
+        <div>
+          <h3>Login Enumeration</h3>
+          <p>Different error messages reveal valid usernames.</p>
+          <div class="notice mono">Lab: /auth/login.html</div>
+        </div>
+        <div>
+          <a class="label info" href="/auth/">Open Auth Labs</a>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>JWT & Session Weaknesses</h3>
+          <p>Predictable session IDs, weak JWT secrets, alg=none.</p>
+          <div class="notice mono">Labs: /auth/session.html, /auth/jwt.html</div>
+        </div>
+        <div>
+          <a class="label info" href="/auth/jwt.html">Open JWT Lab</a>
+        </div>
+      </div>
+
+      <h2 class="section-title" id="client">Client-Side & Storage</h2>
+      <div class="lab">
+        <div>
+          <h3>DOM XSS & Sinks</h3>
+          <p>Learn where user input flows into dangerous DOM APIs.</p>
+          <div class="notice mono">Lab: /labs/xss-reflected.html</div>
+        </div>
+        <div>
+          <a class="label info" href="/labs/xss-reflected.html">Open XSS Lab</a>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>Storage Audits</h3>
+          <p>Check localStorage, sessionStorage, and caches for secrets.</p>
+          <div class="notice mono">Lab: /labs/localstorage.html</div>
+        </div>
+        <div>
+          <a class="label info" href="/labs/localstorage.html">Open Storage Lab</a>
+        </div>
+      </div>
+
+      <h2 class="section-title" id="platform">Platform & CMS</h2>
+      <div class="lab">
+        <div>
+          <h3>Platform Fingerprints</h3>
+          <p>Detect ASP.NET, PHP, Node, Python, Java, Ruby indicators.</p>
+          <div class="notice mono">Endpoints: /api/platform/*</div>
+        </div>
+        <div>
+          <a class="label info" href="/platform/">Open Platform Labs</a>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>CMS Testing</h3>
+          <p>WordPress, Drupal, Joomla version and endpoint clues.</p>
+          <div class="notice mono">Endpoints: /api/cms/*</div>
+        </div>
+        <div>
+          <a class="label info" href="/cms/">Open CMS Labs</a>
+        </div>
+      </div>
+
+      <h2 class="section-title" id="logic">Business Logic & Input Validation</h2>
+      <div class="lab">
+        <div>
+          <h3>Input Validation</h3>
+          <p>Null bytes, double encoding, CRLF tests.</p>
+          <div class="notice mono">Lab: /labs/input-validation.html</div>
+        </div>
+        <div>
+          <a class="label info" href="/labs/input-validation.html">Open Validation Lab</a>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>File Upload</h3>
+          <p>Extension, MIME, and path traversal bypass tests.</p>
+          <div class="notice mono">Lab: /labs/upload.html</div>
+        </div>
+        <div>
+          <a class="label info" href="/labs/upload.html">Open Upload Lab</a>
+        </div>
+      </div>
+
+      <h2 class="section-title" id="utilities">Utilities & Reporting</h2>
+      <div class="lab">
+        <div>
+          <h3>Encoders, Hashes, Timestamps</h3>
+          <p>Use built-in helpers to speed up testing and reporting.</p>
+          <div class="notice mono">Tools: /utilities/</div>
+        </div>
+        <div>
+          <a class="label info" href="/utilities/">Open Utilities</a>
+        </div>
+      </div>
+
+      <div class="footer">Have feedback? Open an issue or contribute improvements.</div>
+    </main>
+  </div>
+</body>
+</html>

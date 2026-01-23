@@ -42,6 +42,7 @@ This is a static site. You can deploy directly from the repo using Vercel’s de
 
 - `index.html` — landing page
 - `home/` — main testing hub + Tier 1 labs
+- `resource/` — education resource hub and learning path
 - `recon/` — passive/active recon artifacts
 - `owasp/` — A01–A10 category pages
 - `labs/` — hands‑on vulnerability labs
