@@ -176,3 +176,47 @@ if (document.readyState === 'loading') {
 } else {
   setupSidebarToggle();
 }
+
+function setupProgressTracker() {
+  var boxes = document.querySelectorAll('input[type="checkbox"][data-progress]');
+  if (!boxes.length) return;
+  var key = 'vulnlab-progress';
+  var state = {};
+  try { state = JSON.parse(localStorage.getItem(key) || '{}'); } catch (e) {}
+
+  function updateSummary() {
+    var total = boxes.length;
+    var done = 0;
+    boxes.forEach(function (cb) { if (cb.checked) done += 1; });
+    var summary = document.querySelector('[data-progress-summary]');
+    if (summary) summary.textContent = done + '/' + total + ' complete';
+  }
+
+  boxes.forEach(function (cb) {
+    var id = cb.getAttribute('data-progress');
+    if (state[id]) cb.checked = true;
+    cb.addEventListener('change', function () {
+      state[id] = cb.checked;
+      try { localStorage.setItem(key, JSON.stringify(state)); } catch (e) {}
+      updateSummary();
+    });
+  });
+
+  var reset = document.querySelector('[data-progress-reset]');
+  if (reset) {
+    reset.addEventListener('click', function () {
+      state = {};
+      boxes.forEach(function (cb) { cb.checked = false; });
+      try { localStorage.removeItem(key); } catch (e) {}
+      updateSummary();
+    });
+  }
+
+  updateSummary();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', setupProgressTracker);
+} else {
+  setupProgressTracker();
+}

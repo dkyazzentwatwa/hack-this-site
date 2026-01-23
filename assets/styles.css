@@ -306,6 +306,47 @@ button {
   font-size: 12px;
 }
 
+.payload-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.payload {
+  font-family: var(--mono);
+  background: #0f1421;
+  border: 1px dashed #2a364f;
+  padding: 8px 10px;
+  border-radius: 10px;
+  color: #cdd6ea;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.checklist {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0;
+  display: grid;
+  gap: 8px;
+}
+
+.checklist label {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  color: #d7deea;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.checklist input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  accent-color: var(--accent);
+}
+
 .info-tip {
   display: inline-flex;
   align-items: center;

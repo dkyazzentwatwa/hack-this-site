@@ -17,6 +17,7 @@
       <div class="nav-group">
         <h2>Jump To</h2>
         <a href="#start">Getting Started</a>
+        <a href="#progress">Progress Tracker</a>
         <a href="#recon">Recon</a>
         <a href="#owasp">OWASP Top 10</a>
         <a href="#api">API Security</a>
@@ -53,6 +54,18 @@
         </div>
       </section>
 
+      <div class="lab" id="progress">
+        <div>
+          <h3>Progress Tracker</h3>
+          <p>Check items as you complete labs. Saved in your browser.</p>
+          <div class="notice mono" data-progress-summary>0/0 complete</div>
+        </div>
+        <div>
+          <button type="button" data-progress-reset>Reset Progress</button>
+          <div class="notice" style="margin-top:8px">Clears local progress only.</div>
+        </div>
+      </div>
+
       <h2 class="section-title">How To Use The Labs</h2>
       <div class="lab">
         <div>
@@ -69,7 +82,7 @@
       <div class="lab">
         <div>
           <h3>Passive Recon</h3>
-          <p>Learn how to extract metadata, comments, links, and hidden elements.</p>
+          <p>Extract metadata, comments, links, and hidden elements.</p>
           <div class="notice mono">Targets: /recon/, HTML comments, meta tags, hidden inputs.</div>
         </div>
         <div>
@@ -79,12 +92,22 @@
       </div>
       <div class="lab">
         <div>
-          <h3>Active Recon</h3>
-          <p>Inspect headers, cookies, error messages, methods, and robots/sitemap.</p>
-          <div class="notice mono">Endpoints: /api/headers, /api/cookies, /api/methods</div>
+          <h3>What to Try (Recon)</h3>
+          <p>Use these inputs and actions to practice discovery.</p>
+          <div class="payload-list">
+            <div class="payload">Search: /api/search?q=admin</div>
+            <div class="payload">Headers: /api/headers</div>
+            <div class="payload">Cookies: /api/cookies</div>
+            <div class="payload">Methods: /api/methods (OPTIONS)</div>
+          </div>
         </div>
         <div>
-          <div class="notice">What to learn: server fingerprints and security header gaps.</div>
+          <ul class="checklist">
+            <li><label><input type="checkbox" data-progress="recon-comments">Harvest HTML comments and TODOs</label></li>
+            <li><label><input type="checkbox" data-progress="recon-links">Map internal and external links</label></li>
+            <li><label><input type="checkbox" data-progress="recon-hidden">Find hidden inputs or display:none elements</label></li>
+            <li><label><input type="checkbox" data-progress="recon-headers">Fingerprint headers and cookies</label></li>
+          </ul>
         </div>
       </div>
 
@@ -93,40 +116,104 @@
         <div>
           <h3>A01 Broken Access Control</h3>
           <p>IDOR and forced browsing. Try changing IDs and accessing admin pages.</p>
-          <div class="notice mono">Labs: /labs/idor.html, /admin/</div>
+          <div class="payload-list">
+            <div class="payload">/api/orders/1002</div>
+            <div class="payload">/admin/</div>
+          </div>
         </div>
         <div>
           <a class="label info" href="/owasp/a01.html">Open A01</a>
+          <ul class="checklist">
+            <li><label><input type="checkbox" data-progress="a01-idor">Retrieve another user’s order</label></li>
+            <li><label><input type="checkbox" data-progress="a01-forced">Access an admin page without auth</label></li>
+          </ul>
         </div>
       </div>
       <div class="lab">
         <div>
           <h3>A02 Cryptographic Failures</h3>
           <p>Find exposed secrets and weak hash usage.</p>
-          <div class="notice mono">Labs: /labs/secret-scanner.html, /utilities/</div>
+          <div class="payload-list">
+            <div class="payload">Check /labs/secret-scanner.html</div>
+            <div class="payload">Use /api/hash to compare MD5/SHA1/SHA256</div>
+          </div>
         </div>
         <div>
           <a class="label info" href="/owasp/a02.html">Open A02</a>
+          <ul class="checklist">
+            <li><label><input type="checkbox" data-progress="a02-secrets">Locate exposed secrets in HTML/JS</label></li>
+            <li><label><input type="checkbox" data-progress="a02-weak-hash">Identify weak hashes (MD5/SHA1)</label></li>
+          </ul>
         </div>
       </div>
       <div class="lab">
         <div>
           <h3>A03 Injection</h3>
           <p>Reflected XSS, SQLi errors, command injection (simulated).</p>
-          <div class="notice mono">Labs: /labs/xss-reflected.html, /labs/sqli-error.html</div>
+          <div class="payload-list">
+            <div class="payload">XSS: ?q=&lt;img src=x onerror=alert(1)&gt;</div>
+            <div class="payload">SQLi: ' OR 1=1 --</div>
+            <div class="payload">Cmd: 127.0.0.1; whoami</div>
+          </div>
         </div>
         <div>
           <a class="label info" href="/owasp/a03.html">Open A03</a>
+          <ul class="checklist">
+            <li><label><input type="checkbox" data-progress="a03-xss">Trigger reflected XSS</label></li>
+            <li><label><input type="checkbox" data-progress="a03-sqli">Trigger SQL error with payload</label></li>
+            <li><label><input type="checkbox" data-progress="a03-cmdi">Trigger command injection output</label></li>
+          </ul>
         </div>
       </div>
       <div class="lab">
         <div>
           <h3>A05 Security Misconfiguration</h3>
           <p>Missing headers, exposed backups, CORS mistakes.</p>
-          <div class="notice mono">Labs: /labs/security-headers.html, /backup/</div>
+          <div class="payload-list">
+            <div class="payload">Headers: /api/headers</div>
+            <div class="payload">Backup: /backup/config.old</div>
+            <div class="payload">CORS: /api/cors</div>
+          </div>
         </div>
         <div>
           <a class="label info" href="/owasp/a05.html">Open A05</a>
+          <ul class="checklist">
+            <li><label><input type="checkbox" data-progress="a05-headers">Identify missing security headers</label></li>
+            <li><label><input type="checkbox" data-progress="a05-backup">Locate exposed backup files</label></li>
+            <li><label><input type="checkbox" data-progress="a05-cors">Detect CORS wildcard with credentials</label></li>
+          </ul>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>A07 Auth Failures</h3>
+          <p>Weak login, predictable reset tokens, session fixation.</p>
+          <div class="payload-list">
+            <div class="payload">Login: admin / admin123</div>
+            <div class="payload">Reset: reset-1</div>
+          </div>
+        </div>
+        <div>
+          <a class="label info" href="/owasp/a07.html">Open A07</a>
+          <ul class="checklist">
+            <li><label><input type="checkbox" data-progress="a07-enum">Identify username enumeration</label></li>
+            <li><label><input type="checkbox" data-progress="a07-reset">Use predictable reset token</label></li>
+          </ul>
+        </div>
+      </div>
+      <div class="lab">
+        <div>
+          <h3>A10 SSRF</h3>
+          <p>Server-side request forgery to internal metadata.</p>
+          <div class="payload-list">
+            <div class="payload">http://169.254.169.254/latest/meta-data/</div>
+          </div>
+        </div>
+        <div>
+          <a class="label info" href="/owasp/a10.html">Open A10</a>
+          <ul class="checklist">
+            <li><label><input type="checkbox" data-progress="a10-ssrf">Trigger metadata exposure</label></li>
+          </ul>
         </div>
       </div>
 
@@ -135,30 +222,53 @@
         <div>
           <h3>REST API</h3>
           <p>Endpoint enumeration, BOLA/IDOR, missing rate limits.</p>
-          <div class="notice mono">Endpoints: /api/users, /api/orders, /api/rate-limit</div>
+          <div class="payload-list">
+            <div class="payload">/api/users</div>
+            <div class="payload">/api/orders/1003</div>
+            <div class="payload">/api/rate-limit</div>
+          </div>
         </div>
         <div>
           <a class="label info" href="/api-labs/rest.html">Open REST Labs</a>
+          <ul class="checklist">
+            <li><label><input type="checkbox" data-progress="api-enum">Enumerate API endpoints</label></li>
+            <li><label><input type="checkbox" data-progress="api-bola">Access another user’s object</label></li>
+            <li><label><input type="checkbox" data-progress="api-rate">Confirm no rate limiting</label></li>
+          </ul>
         </div>
       </div>
       <div class="lab">
         <div>
           <h3>GraphQL</h3>
           <p>Introspection exposure and query depth testing.</p>
-          <div class="notice mono">Endpoint: /api/graphql</div>
+          <div class="payload-list">
+            <div class="payload">{ __schema { types { name } } }</div>
+            <div class="payload">{ viewer { id role } }</div>
+          </div>
         </div>
         <div>
           <a class="label info" href="/api-labs/graphql.html">Open GraphQL Labs</a>
+          <ul class="checklist">
+            <li><label><input type="checkbox" data-progress="gql-introspection">Run introspection query</label></li>
+            <li><label><input type="checkbox" data-progress="gql-depth">Test depth limits</label></li>
+          </ul>
         </div>
       </div>
       <div class="lab">
         <div>
           <h3>SOAP/XML</h3>
           <p>WSDL exposure and XXE simulation.</p>
-          <div class="notice mono">Endpoint: /api/soap</div>
+          <div class="payload-list">
+            <div class="payload">&lt;!DOCTYPE foo [&lt;!ENTITY xxe SYSTEM "file:///etc/passwd"&gt;]&gt;</div>
+            <div class="payload">&lt;request&gt;&amp;xxe;&lt;/request&gt;</div>
+          </div>
         </div>
         <div>
           <a class="label info" href="/api-labs/soap.html">Open SOAP Labs</a>
+          <ul class="checklist">
+            <li><label><input type="checkbox" data-progress="soap-wsdl">Locate WSDL file</label></li>
+            <li><label><input type="checkbox" data-progress="soap-xxe">Trigger XXE simulation</label></li>
+          </ul>
         </div>
       </div>
 
@@ -167,20 +277,34 @@
         <div>
           <h3>Login Enumeration</h3>
           <p>Different error messages reveal valid usernames.</p>
-          <div class="notice mono">Lab: /auth/login.html</div>
+          <div class="payload-list">
+            <div class="payload">Login: admin / wrongpass</div>
+            <div class="payload">Login: unknown / anypass</div>
+          </div>
         </div>
         <div>
-          <a class="label info" href="/auth/">Open Auth Labs</a>
+          <a class="label info" href="/auth/login.html">Open Login Lab</a>
+          <ul class="checklist">
+            <li><label><input type="checkbox" data-progress="auth-enum">Observe different login errors</label></li>
+            <li><label><input type="checkbox" data-progress="auth-bruteforce">Test brute-force behavior</label></li>
+          </ul>
         </div>
       </div>
       <div class="lab">
         <div>
           <h3>JWT & Session Weaknesses</h3>
-          <p>Predictable session IDs, weak JWT secrets, alg=none.</p>
-          <div class="notice mono">Labs: /auth/session.html, /auth/jwt.html</div>
+          <p>Predictable session IDs and weak JWT secrets.</p>
+          <div class="payload-list">
+            <div class="payload">JWT header: {"alg":"none"}</div>
+            <div class="payload">Session: SID-00001 → SID-00002</div>
+          </div>
         </div>
         <div>
           <a class="label info" href="/auth/jwt.html">Open JWT Lab</a>
+          <ul class="checklist">
+            <li><label><input type="checkbox" data-progress="auth-jwt">Decode JWT token</label></li>
+            <li><label><input type="checkbox" data-progress="auth-session">Verify session predictability</label></li>
+          </ul>
         </div>
       </div>
 
@@ -188,21 +312,35 @@
       <div class="lab">
         <div>
           <h3>DOM XSS & Sinks</h3>
-          <p>Learn where user input flows into dangerous DOM APIs.</p>
-          <div class="notice mono">Lab: /labs/xss-reflected.html</div>
+          <p>Trace user input to dangerous DOM APIs.</p>
+          <div class="payload-list">
+            <div class="payload">#/&quot;&gt;&lt;img src=x onerror=alert(1)&gt;</div>
+            <div class="payload">?q=&lt;svg onload=alert(1)&gt;</div>
+          </div>
         </div>
         <div>
           <a class="label info" href="/labs/xss-reflected.html">Open XSS Lab</a>
+          <ul class="checklist">
+            <li><label><input type="checkbox" data-progress="client-xss">Trigger DOM-based reflection</label></li>
+            <li><label><input type="checkbox" data-progress="client-sinks">Identify dangerous sinks</label></li>
+          </ul>
         </div>
       </div>
       <div class="lab">
         <div>
           <h3>Storage Audits</h3>
-          <p>Check localStorage, sessionStorage, and caches for secrets.</p>
-          <div class="notice mono">Lab: /labs/localstorage.html</div>
+          <p>Check localStorage and sessionStorage for secrets.</p>
+          <div class="payload-list">
+            <div class="payload">localStorage.getItem('auth_token')</div>
+            <div class="payload">sessionStorage.getItem('cart')</div>
+          </div>
         </div>
         <div>
           <a class="label info" href="/labs/localstorage.html">Open Storage Lab</a>
+          <ul class="checklist">
+            <li><label><input type="checkbox" data-progress="client-storage">Dump storage values</label></li>
+            <li><label><input type="checkbox" data-progress="client-secrets">Identify sensitive data</label></li>
+          </ul>
         </div>
       </div>
 
@@ -211,20 +349,36 @@
         <div>
           <h3>Platform Fingerprints</h3>
           <p>Detect ASP.NET, PHP, Node, Python, Java, Ruby indicators.</p>
-          <div class="notice mono">Endpoints: /api/platform/*</div>
+          <div class="payload-list">
+            <div class="payload">/api/platform/phpinfo</div>
+            <div class="payload">/api/platform/java</div>
+            <div class="payload">/api/platform/python</div>
+          </div>
         </div>
         <div>
           <a class="label info" href="/platform/">Open Platform Labs</a>
+          <ul class="checklist">
+            <li><label><input type="checkbox" data-progress="platform-fingerprint">Fingerprint a platform endpoint</label></li>
+            <li><label><input type="checkbox" data-progress="platform-debug">Find a debug/config clue</label></li>
+          </ul>
         </div>
       </div>
       <div class="lab">
         <div>
           <h3>CMS Testing</h3>
           <p>WordPress, Drupal, Joomla version and endpoint clues.</p>
-          <div class="notice mono">Endpoints: /api/cms/*</div>
+          <div class="payload-list">
+            <div class="payload">/api/cms/wp-json</div>
+            <div class="payload">/api/cms/drupal</div>
+            <div class="payload">/api/cms/joomla</div>
+          </div>
         </div>
         <div>
           <a class="label info" href="/cms/">Open CMS Labs</a>
+          <ul class="checklist">
+            <li><label><input type="checkbox" data-progress="cms-version">Identify CMS version</label></li>
+            <li><label><input type="checkbox" data-progress="cms-endpoints">Locate CMS endpoints</label></li>
+          </ul>
         </div>
       </div>
 
@@ -233,20 +387,34 @@
         <div>
           <h3>Input Validation</h3>
           <p>Null bytes, double encoding, CRLF tests.</p>
-          <div class="notice mono">Lab: /labs/input-validation.html</div>
+          <div class="payload-list">
+            <div class="payload">%00%2e%2e%2f%252e%252e%252f</div>
+            <div class="payload">%0d%0aSet-Cookie: injected=true</div>
+          </div>
         </div>
         <div>
           <a class="label info" href="/labs/input-validation.html">Open Validation Lab</a>
+          <ul class="checklist">
+            <li><label><input type="checkbox" data-progress="input-null">Test null byte handling</label></li>
+            <li><label><input type="checkbox" data-progress="input-double">Test double encoding</label></li>
+          </ul>
         </div>
       </div>
       <div class="lab">
         <div>
           <h3>File Upload</h3>
           <p>Extension, MIME, and path traversal bypass tests.</p>
-          <div class="notice mono">Lab: /labs/upload.html</div>
+          <div class="payload-list">
+            <div class="payload">shell.php.jpg</div>
+            <div class="payload">..\/..\/etc\/passwd</div>
+          </div>
         </div>
         <div>
           <a class="label info" href="/labs/upload.html">Open Upload Lab</a>
+          <ul class="checklist">
+            <li><label><input type="checkbox" data-progress="upload-ext">Test double extension</label></li>
+            <li><label><input type="checkbox" data-progress="upload-mime">Test MIME mismatch</label></li>
+          </ul>
         </div>
       </div>
 
@@ -255,10 +423,17 @@
         <div>
           <h3>Encoders, Hashes, Timestamps</h3>
           <p>Use built-in helpers to speed up testing and reporting.</p>
-          <div class="notice mono">Tools: /utilities/</div>
+          <div class="payload-list">
+            <div class="payload">Base64: PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg==</div>
+            <div class="payload">Timestamp: 1700000000</div>
+          </div>
         </div>
         <div>
           <a class="label info" href="/utilities/">Open Utilities</a>
+          <ul class="checklist">
+            <li><label><input type="checkbox" data-progress="util-encode">Encode a payload</label></li>
+            <li><label><input type="checkbox" data-progress="util-hash">Generate hashes for a string</label></li>
+          </ul>
         </div>
       </div>
 
