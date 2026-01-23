@@ -37,6 +37,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 .sidebar {
+  width: 260px;
   position: sticky;
   top: 0;
   align-self: start;
@@ -44,6 +45,8 @@ a { color: inherit; text-decoration: none; }
   border-right: 1px solid #20283a;
   padding: 28px 20px;
   height: 100vh;
+  transition: transform 0.25s ease;
+  z-index: 10;
 }
 
 .sidebar h1 {
@@ -97,6 +100,61 @@ a { color: inherit; text-decoration: none; }
 
 .nav-group a:hover {
   background: #1a2234;
+}
+
+.sidebar-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid #2a364f;
+  background: #1a2234;
+  color: #d7deea;
+  cursor: pointer;
+  margin-bottom: 14px;
+}
+
+.sidebar-toggle:hover {
+  background: #232d42;
+}
+
+.sidebar-fab {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 30;
+  display: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid #2a364f;
+  background: #1a2234;
+  color: #d7deea;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(7, 10, 18, 0.6);
+  backdrop-filter: blur(2px);
+  display: none;
+  z-index: 8;
+}
+
+body.sidebar-collapsed .layout {
+  grid-template-columns: 0 1fr;
+}
+
+body.sidebar-collapsed .sidebar {
+  transform: translateX(-110%);
+}
+
+body.sidebar-collapsed .sidebar-fab {
+  display: inline-flex;
 }
 
 .main {
@@ -308,7 +366,9 @@ button {
 
 @media (max-width: 980px) {
   .layout { grid-template-columns: 1fr; }
-  .sidebar { height: auto; position: relative; }
+  .sidebar { height: 100vh; position: fixed; left: 0; top: 0; transform: translateX(-110%); }
+  body.sidebar-open .sidebar { transform: translateX(0); }
+  body.sidebar-open .sidebar-backdrop { display: block; }
   .hero { grid-template-columns: 1fr; }
   .lab { grid-template-columns: 1fr; }
 }
