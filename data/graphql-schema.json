@@ -3,13 +3,248 @@
     "queryType": { "name": "Query" },
     "mutationType": { "name": "Mutation" },
     "types": [
-      { "name": "Query", "fields": [
-        { "name": "user", "args": [{"name": "id", "type": "ID"}] },
-        { "name": "orders", "args": [] }
-      ]},
-      { "name": "Mutation", "fields": [
-        { "name": "updateRole", "args": [{"name": "id", "type": "ID"}, {"name": "role", "type": "String"}] }
-      ]}
+      {
+        "name": "Query",
+        "kind": "OBJECT",
+        "fields": [
+          {
+            "name": "users",
+            "type": { "name": "[User!]!", "kind": "LIST" },
+            "args": [],
+            "description": "Retrieve all users (no auth required!)"
+          },
+          {
+            "name": "user",
+            "type": { "name": "User", "kind": "OBJECT" },
+            "args": [
+              { "name": "id", "type": { "name": "ID!", "kind": "SCALAR" } }
+            ],
+            "description": "Get a specific user by ID"
+          },
+          {
+            "name": "orders",
+            "type": { "name": "[Order!]!", "kind": "LIST" },
+            "args": [],
+            "description": "Retrieve all orders"
+          },
+          {
+            "name": "order",
+            "type": { "name": "Order", "kind": "OBJECT" },
+            "args": [
+              { "name": "id", "type": { "name": "ID!", "kind": "SCALAR" } }
+            ],
+            "description": "Get a specific order by ID"
+          },
+          {
+            "name": "internalMetrics",
+            "type": { "name": "Metrics", "kind": "OBJECT" },
+            "args": [],
+            "description": "Internal metrics endpoint (should be protected!)"
+          },
+          {
+            "name": "adminUsers",
+            "type": { "name": "[User!]!", "kind": "LIST" },
+            "args": [],
+            "description": "List all admin users"
+          }
+        ]
+      },
+      {
+        "name": "Mutation",
+        "kind": "OBJECT",
+        "fields": [
+          {
+            "name": "updateUserRole",
+            "type": { "name": "User", "kind": "OBJECT" },
+            "args": [
+              { "name": "userId", "type": { "name": "ID!", "kind": "SCALAR" } },
+              { "name": "newRole", "type": { "name": "String!", "kind": "SCALAR" } }
+            ],
+            "description": "Update a user's role (privilege escalation risk!)"
+          },
+          {
+            "name": "deleteUser",
+            "type": { "name": "Boolean", "kind": "SCALAR" },
+            "args": [
+              { "name": "id", "type": { "name": "ID!", "kind": "SCALAR" } }
+            ],
+            "description": "Delete a user account"
+          },
+          {
+            "name": "createOrder",
+            "type": { "name": "Order", "kind": "OBJECT" },
+            "args": [
+              { "name": "userId", "type": { "name": "ID!", "kind": "SCALAR" } },
+              { "name": "items", "type": { "name": "[String!]!", "kind": "LIST" } }
+            ],
+            "description": "Create a new order"
+          },
+          {
+            "name": "updateEmail",
+            "type": { "name": "User", "kind": "OBJECT" },
+            "args": [
+              { "name": "userId", "type": { "name": "ID!", "kind": "SCALAR" } },
+              { "name": "newEmail", "type": { "name": "String!", "kind": "SCALAR" } }
+            ],
+            "description": "Update user email"
+          }
+        ]
+      },
+      {
+        "name": "User",
+        "kind": "OBJECT",
+        "fields": [
+          {
+            "name": "id",
+            "type": { "name": "ID!", "kind": "SCALAR" },
+            "args": []
+          },
+          {
+            "name": "email",
+            "type": { "name": "String!", "kind": "SCALAR" },
+            "args": []
+          },
+          {
+            "name": "username",
+            "type": { "name": "String!", "kind": "SCALAR" },
+            "args": []
+          },
+          {
+            "name": "role",
+            "type": { "name": "String!", "kind": "SCALAR" },
+            "args": [],
+            "description": "User role: 'user', 'admin', 'moderator'"
+          },
+          {
+            "name": "privateKey",
+            "type": { "name": "String", "kind": "SCALAR" },
+            "args": [],
+            "description": "Private API key (should not be exposed!)"
+          },
+          {
+            "name": "apiToken",
+            "type": { "name": "String", "kind": "SCALAR" },
+            "args": [],
+            "description": "API authentication token"
+          },
+          {
+            "name": "passwordHash",
+            "type": { "name": "String", "kind": "SCALAR" },
+            "args": [],
+            "description": "Hashed password (exposed via introspection!)"
+          },
+          {
+            "name": "createdAt",
+            "type": { "name": "String", "kind": "SCALAR" },
+            "args": []
+          },
+          {
+            "name": "orders",
+            "type": { "name": "[Order!]!", "kind": "LIST" },
+            "args": []
+          }
+        ]
+      },
+      {
+        "name": "Order",
+        "kind": "OBJECT",
+        "fields": [
+          {
+            "name": "id",
+            "type": { "name": "ID!", "kind": "SCALAR" },
+            "args": []
+          },
+          {
+            "name": "userId",
+            "type": { "name": "ID!", "kind": "SCALAR" },
+            "args": []
+          },
+          {
+            "name": "total",
+            "type": { "name": "Float!", "kind": "SCALAR" },
+            "args": []
+          },
+          {
+            "name": "items",
+            "type": { "name": "[String!]!", "kind": "LIST" },
+            "args": []
+          },
+          {
+            "name": "status",
+            "type": { "name": "String!", "kind": "SCALAR" },
+            "args": []
+          },
+          {
+            "name": "createdAt",
+            "type": { "name": "String", "kind": "SCALAR" },
+            "args": []
+          },
+          {
+            "name": "user",
+            "type": { "name": "User", "kind": "OBJECT" },
+            "args": []
+          }
+        ]
+      },
+      {
+        "name": "Metrics",
+        "kind": "OBJECT",
+        "fields": [
+          {
+            "name": "activeUsers",
+            "type": { "name": "Int!", "kind": "SCALAR" },
+            "args": []
+          },
+          {
+            "name": "totalOrders",
+            "type": { "name": "Int!", "kind": "SCALAR" },
+            "args": []
+          },
+          {
+            "name": "serverLoad",
+            "type": { "name": "Float!", "kind": "SCALAR" },
+            "args": []
+          },
+          {
+            "name": "databasePassword",
+            "type": { "name": "String", "kind": "SCALAR" },
+            "args": [],
+            "description": "Database password (critical exposure!)"
+          },
+          {
+            "name": "awsSecretKey",
+            "type": { "name": "String", "kind": "SCALAR" },
+            "args": [],
+            "description": "AWS secret key (critical exposure!)"
+          },
+          {
+            "name": "apiKeys",
+            "type": { "name": "[String!]!", "kind": "LIST" },
+            "args": [],
+            "description": "Internal API keys"
+          }
+        ]
+      },
+      {
+        "name": "String",
+        "kind": "SCALAR"
+      },
+      {
+        "name": "Int",
+        "kind": "SCALAR"
+      },
+      {
+        "name": "Float",
+        "kind": "SCALAR"
+      },
+      {
+        "name": "Boolean",
+        "kind": "SCALAR"
+      },
+      {
+        "name": "ID",
+        "kind": "SCALAR"
+      }
     ]
   }
 }

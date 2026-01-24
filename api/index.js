@@ -43,6 +43,16 @@ const handlers = {
   'platform/java': require('../server/api/platform/java'),
   'platform/ruby': require('../server/api/platform/ruby'),
   'internal/metrics': require('../server/api/internal/metrics'),
+  'validate/xss-reflected': require('../server/api 2/validate/xss-reflected'),
+  'validate/sqli-error': require('../server/api 2/validate/sqli-error'),
+  'validate/idor': require('../server/api 2/validate/idor'),
+  'validate/localstorage': require('../server/api 2/validate/localstorage'),
+  'validate/secret-scanner': require('../server/api 2/validate/secret-scanner'),
+  'validate/git-exposure': require('../server/api 2/validate/git-exposure'),
+  'validate/cors': require('../server/api 2/validate/cors'),
+  'validate/upload': require('../server/api 2/validate/upload'),
+  'validate/input-validation': require('../server/api 2/validate/input-validation'),
+  'validate/security-headers': require('../server/api 2/validate/security-headers'),
 };
 
 module.exports = async (req, res) => {

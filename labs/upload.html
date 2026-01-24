@@ -6,6 +6,7 @@
   <title>File Upload Lab - VulnLab Academy</title>
   <link rel="stylesheet" href="/assets/styles.css">
   <script src="/assets/app.js"></script>
+  <script src="/assets/lab-content.js"></script>
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 </head>
 <body>
@@ -21,7 +22,7 @@
     </aside>
     <main class="main">
       <h2 class="section-title">VULN-004 File Upload</h2>
-      <div class="lab">
+      <div class="lab" data-lab-id="upload">
         <div>
           <h3>Upload Simulator</h3>
           <p>Test extension, MIME, and path traversal validation.</p>
@@ -37,15 +38,28 @@
             <label for="data">Content (base64/plain)</label>
             <textarea id="data" rows="4">PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg==</textarea>
           </div>
-          <button type="button" onclick="upload()">Upload</button>
+          <div style="display:flex; gap:8px;">
+            <button type="button" onclick="upload()">Upload</button>
+            <button type="button" class="validate-btn" onclick="validateUpload()">Validate Solution</button>
+          </div>
         </div>
         <div>
           <pre id="upload-output" class="notice mono">Output...</pre>
+          <div id="validation-result"></div>
         </div>
       </div>
     </main>
   </div>
   <script>
+    // Attach educational content
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        attachLabContent('upload');
+      });
+    } else {
+      attachLabContent('upload');
+    }
+
     function upload() {
       var payload = {
         filename: document.getElementById('filename').value,
@@ -59,6 +73,54 @@
       })
         .then(function (r) { return r.text(); })
         .then(function (t) { document.getElementById('upload-output').textContent = t; });
+    }
+
+    async function validateUpload() {
+      var fileName = document.getElementById('filename').value;
+      var resultEl = document.getElementById('validation-result');
+
+      showLoading(resultEl);
+
+      try {
+        var sessionId = localStorage.getItem('session-id') || 'session-' + Date.now();
+        localStorage.setItem('session-id', sessionId);
+
+        var hasDangerousExtension = /\.(php|jsp|aspx|exe|sh|bat|cmd)$/i.test(fileName);
+        var hasDoubleExtension = /\.(jpg|png|gif)\.(php|jsp|aspx)$/i.test(fileName);
+
+        var response = await fetch('/api/validate/upload?sessionId=' + sessionId +
+          '&fileName=' + encodeURIComponent(fileName) +
+          '&uploadedExecutable=' + hasDangerousExtension +
+          '&bypassedExtensionCheck=' + (hasDangerousExtension || hasDoubleExtension));
+        var data = await response.json();
+
+        hideLoading(resultEl);
+
+        if (data.success) {
+          showSuccess(resultEl, data.message);
+          if (data.explanation) {
+            var explanation = document.createElement('div');
+            explanation.className = 'notice';
+            explanation.style.marginTop = '12px';
+            explanation.innerHTML = '<strong>Explanation:</strong> ' + data.explanation;
+            resultEl.appendChild(explanation);
+          }
+          if (data.nextSteps) {
+            var nextSteps = document.createElement('div');
+            nextSteps.className = 'notice';
+            nextSteps.style.marginTop = '8px';
+            nextSteps.innerHTML = '<strong>Next Steps:</strong> ' + data.nextSteps;
+            resultEl.appendChild(nextSteps);
+          }
+          markLabComplete('upload');
+        } else {
+          showError(resultEl, data.hint || 'Validation failed. Try again!');
+        }
+      } catch (error) {
+        hideLoading(resultEl);
+        showError(resultEl, 'Validation request failed. Check your connection.');
+        console.error('Validation error:', error);
+      }
     }
   </script>
 </body>

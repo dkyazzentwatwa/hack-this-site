@@ -6,6 +6,7 @@
   <title>Git Exposure Lab - VulnLab Academy</title>
   <link rel="stylesheet" href="/assets/styles.css">
   <script src="/assets/app.js"></script>
+  <script src="/assets/lab-content.js"></script>
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 </head>
 <body>
@@ -22,17 +23,70 @@
     </aside>
     <main class="main">
       <h2 class="section-title">VULN-007 Git/SVN Exposure</h2>
-      <div class="lab">
+      <div class="lab" data-lab-id="git-exposure">
         <div>
           <h3>Exposed Git Metadata</h3>
           <p>Simulated .git files are accessible.</p>
           <div class="notice mono">/git/HEAD | /git/config</div>
+          <button type="button" class="validate-btn" style="margin-top:8px" onclick="validateGitExposure()">Validate Solution</button>
         </div>
         <div>
           <div class="notice">Use your shortcut to detect exposed repos.</div>
+          <div id="validation-result"></div>
         </div>
       </div>
     </main>
   </div>
+  <script>
+    // Attach educational content
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        attachLabContent('git-exposure');
+      });
+    } else {
+      attachLabContent('git-exposure');
+    }
+
+    async function validateGitExposure() {
+      var resultEl = document.getElementById('validation-result');
+      showLoading(resultEl);
+
+      try {
+        var sessionId = localStorage.getItem('session-id') || 'session-' + Date.now();
+        localStorage.setItem('session-id', sessionId);
+
+        var response = await fetch('/api/validate/git-exposure?sessionId=' + sessionId +
+          '&foundGitFolder=true&payload=.git/HEAD');
+        var data = await response.json();
+
+        hideLoading(resultEl);
+
+        if (data.success) {
+          showSuccess(resultEl, data.message);
+          if (data.explanation) {
+            var explanation = document.createElement('div');
+            explanation.className = 'notice';
+            explanation.style.marginTop = '12px';
+            explanation.innerHTML = '<strong>Explanation:</strong> ' + data.explanation;
+            resultEl.appendChild(explanation);
+          }
+          if (data.nextSteps) {
+            var nextSteps = document.createElement('div');
+            nextSteps.className = 'notice';
+            nextSteps.style.marginTop = '8px';
+            nextSteps.innerHTML = '<strong>Next Steps:</strong> ' + data.nextSteps;
+            resultEl.appendChild(nextSteps);
+          }
+          markLabComplete('git-exposure');
+        } else {
+          showError(resultEl, data.hint || 'Validation failed. Try again!');
+        }
+      } catch (error) {
+        hideLoading(resultEl);
+        showError(resultEl, 'Validation request failed. Check your connection.');
+        console.error('Validation error:', error);
+      }
+    }
+  </script>
 </body>
 </html>

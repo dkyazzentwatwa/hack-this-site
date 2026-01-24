@@ -6,6 +6,7 @@
   <title>Storage Leak Lab - VulnLab Academy</title>
   <link rel="stylesheet" href="/assets/styles.css">
   <script src="/assets/app.js"></script>
+  <script src="/assets/lab-content.js"></script>
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 </head>
 <body>
@@ -22,17 +23,45 @@
     </aside>
     <main class="main">
       <h2 class="section-title">STORAGE-001 LocalStorage Audit</h2>
-      <div class="lab">
+      <div class="lab" data-lab-id="localstorage">
         <div>
           <h3>Seeded Storage</h3>
           <p>LocalStorage and sessionStorage contain sensitive values.</p>
-          <button type="button" onclick="dumpStorage()">Dump Storage</button>
+          <div style="display:flex; gap:8px;">
+            <button type="button" onclick="dumpStorage()">Dump Storage</button>
+            <button type="button" class="validate-btn" onclick="validateStorage()">Validate Solution</button>
+          </div>
         </div>
         <div>
           <pre id="storage-output" class="notice mono">Click dump to view storage data.</pre>
+          <div id="validation-result"></div>
         </div>
       </div>
       <script>
+        // Attach educational content
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', function() {
+            attachLabContent('localstorage');
+            seedStorage();
+          });
+        } else {
+          attachLabContent('localstorage');
+          seedStorage();
+        }
+
+        // Pre-seed localStorage with realistic secrets
+        function seedStorage() {
+          try {
+            localStorage.setItem('api_key', 'sk_live_51HxyzAbC123456789DEFGHabcdefghijklmnopqrstuvwxyz');
+            localStorage.setItem('session_token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFkbWluIFVzZXIiLCJpYXQiOjE1MTYyMzkwMjIsImFkbWluIjp0cnVlfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c');
+            localStorage.setItem('user_email', 'admin@vulnerable-labs.local');
+            localStorage.setItem('debug_mode', 'true');
+            localStorage.setItem('internal_api_url', 'https://internal-api.vulnerable-labs.local');
+          } catch (e) {
+            console.log('Cannot pre-seed storage in private mode');
+          }
+        }
+
         function dumpStorage() {
           var data = { localStorage: {}, sessionStorage: {} };
           for (var i = 0; i < localStorage.length; i++) {
@@ -44,6 +73,63 @@
             data.sessionStorage[k] = sessionStorage.getItem(k);
           }
           document.getElementById("storage-output").textContent = JSON.stringify(data, null, 2);
+        }
+
+        async function validateStorage() {
+          var resultEl = document.getElementById('validation-result');
+          showLoading(resultEl);
+
+          try {
+            var data = { localStorage: {}, sessionStorage: {} };
+            for (var i = 0; i < localStorage.length; i++) {
+              var key = localStorage.key(i);
+              data.localStorage[key] = localStorage.getItem(key);
+            }
+            for (var j = 0; j < sessionStorage.length; j++) {
+              var k = sessionStorage.key(j);
+              data.sessionStorage[k] = sessionStorage.getItem(k);
+            }
+
+            var sessionId = localStorage.getItem('session-id') || 'session-' + Date.now();
+            localStorage.setItem('session-id', sessionId);
+
+            var foundApiKey = data.localStorage.api_key ? true : false;
+            var foundSessionToken = data.localStorage.session_token ? true : false;
+            var foundEmail = data.localStorage.user_email ? true : false;
+
+            var response = await fetch('/api/validate/localstorage?sessionId=' + sessionId +
+              '&foundApiKey=' + foundApiKey +
+              '&foundSessionToken=' + foundSessionToken +
+              '&foundEmail=' + foundEmail);
+            var result = await response.json();
+
+            hideLoading(resultEl);
+
+            if (result.success) {
+              showSuccess(resultEl, result.message);
+              if (result.explanation) {
+                var explanation = document.createElement('div');
+                explanation.className = 'notice';
+                explanation.style.marginTop = '12px';
+                explanation.innerHTML = '<strong>Explanation:</strong> ' + result.explanation;
+                resultEl.appendChild(explanation);
+              }
+              if (result.nextSteps) {
+                var nextSteps = document.createElement('div');
+                nextSteps.className = 'notice';
+                nextSteps.style.marginTop = '8px';
+                nextSteps.innerHTML = '<strong>Next Steps:</strong> ' + result.nextSteps;
+                resultEl.appendChild(nextSteps);
+              }
+              markLabComplete('localstorage');
+            } else {
+              showError(resultEl, result.hint || 'Validation failed. Try again!');
+            }
+          } catch (error) {
+            hideLoading(resultEl);
+            showError(resultEl, 'Validation request failed. Check your connection.');
+            console.error('Validation error:', error);
+          }
         }
       </script>
     </main>

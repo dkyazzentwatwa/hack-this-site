@@ -220,3 +220,226 @@ if (document.readyState === 'loading') {
 } else {
   setupProgressTracker();
 }
+
+// ============================================================================
+// PHASE 1: VISUAL FEEDBACK & NAVIGATION ENHANCEMENTS
+// ============================================================================
+
+// Visual Feedback System
+function showLoading(element) {
+  element.classList.add('loading');
+  const spinner = document.createElement('div');
+  spinner.className = 'loading-spinner';
+  spinner.innerHTML = '⏳ Loading...';
+  element.appendChild(spinner);
+}
+
+function hideLoading(element) {
+  element.classList.remove('loading');
+  const spinner = element.querySelector('.loading-spinner');
+  if (spinner) spinner.remove();
+}
+
+function showSuccess(element, message) {
+  const banner = document.createElement('div');
+  banner.className = 'success-banner';
+  banner.innerHTML = `✅ ${message}`;
+  element.insertBefore(banner, element.firstChild);
+
+  // Animate in
+  setTimeout(() => banner.classList.add('visible'), 10);
+
+  // Auto-remove after 5 seconds
+  setTimeout(() => {
+    banner.classList.remove('visible');
+    setTimeout(() => banner.remove(), 300);
+  }, 5000);
+}
+
+function showError(element, message) {
+  const banner = document.createElement('div');
+  banner.className = 'error-banner';
+  banner.innerHTML = `❌ ${message}`;
+  element.insertBefore(banner, element.firstChild);
+
+  setTimeout(() => banner.classList.add('visible'), 10);
+  setTimeout(() => {
+    banner.classList.remove('visible');
+    setTimeout(() => banner.remove(), 300);
+  }, 5000);
+}
+
+function markLabComplete(labId) {
+  const completed = JSON.parse(localStorage.getItem('completed-labs') || '[]');
+  if (!completed.includes(labId)) {
+    completed.push(labId);
+    localStorage.setItem('completed-labs', JSON.stringify(completed));
+
+    // Store timestamp
+    const timestamps = JSON.parse(localStorage.getItem('lab-timestamps') || '{}');
+    timestamps[labId] = new Date().toISOString();
+    localStorage.setItem('lab-timestamps', JSON.stringify(timestamps));
+  }
+}
+
+// Active Navigation Highlighting
+function highlightActiveNav() {
+  const currentPath = window.location.pathname;
+  document.querySelectorAll('.nav-group a').forEach(link => {
+    const href = link.getAttribute('href');
+    if (href === currentPath ||
+        (href !== '/' && currentPath.startsWith(href))) {
+      link.classList.add('active');
+    }
+  });
+}
+
+// Breadcrumb Navigation
+function renderBreadcrumbs() {
+  const path = window.location.pathname;
+  const parts = path.split('/').filter(Boolean);
+
+  if (parts.length === 0) return; // Skip for root
+
+  const breadcrumbs = [{ label: 'Home', url: '/home/' }];
+
+  // Build breadcrumb trail
+  let currentPath = '';
+  parts.forEach((part, index) => {
+    currentPath += '/' + part;
+    if (index < parts.length - 1) { // Don't link current page
+      breadcrumbs.push({
+        label: formatLabel(part),
+        url: currentPath + '/'
+      });
+    } else {
+      breadcrumbs.push({
+        label: formatLabel(part.replace('.html', '')),
+        url: null
+      });
+    }
+  });
+
+  // Create breadcrumb HTML
+  const nav = document.createElement('nav');
+  nav.className = 'breadcrumbs';
+  nav.setAttribute('aria-label', 'Breadcrumb');
+
+  breadcrumbs.forEach((crumb, index) => {
+    if (index > 0) {
+      const separator = document.createElement('span');
+      separator.textContent = ' / ';
+      separator.className = 'breadcrumb-separator';
+      nav.appendChild(separator);
+    }
+
+    if (crumb.url) {
+      const link = document.createElement('a');
+      link.href = crumb.url;
+      link.textContent = crumb.label;
+      nav.appendChild(link);
+    } else {
+      const span = document.createElement('span');
+      span.textContent = crumb.label;
+      span.className = 'breadcrumb-current';
+      nav.appendChild(span);
+    }
+  });
+
+  // Insert before main content
+  const main = document.querySelector('.main');
+  if (main) {
+    const firstHeading = main.querySelector('h2, h1');
+    if (firstHeading) {
+      firstHeading.parentElement.insertBefore(nav, firstHeading);
+    }
+  }
+}
+
+function formatLabel(str) {
+  return str
+    .replace(/-/g, ' ')
+    .replace(/\b\w/g, l => l.toUpperCase());
+}
+
+// Difficulty Badges
+async function addDifficultyBadges() {
+  try {
+    const response = await fetch('/data/lab-metadata.json');
+    const metadata = await response.json();
+
+    document.querySelectorAll('[data-lab-id]').forEach(element => {
+      const labId = element.getAttribute('data-lab-id');
+      const labData = metadata.labs[labId];
+
+      if (!labData) return;
+
+      const title = element.querySelector('h3, h2');
+      if (!title || title.querySelector('.difficulty-badge')) return;
+
+      const badgeContainer = document.createElement('span');
+      badgeContainer.className = 'lab-badges';
+
+      // Difficulty badge
+      const diffBadge = document.createElement('span');
+      diffBadge.className = `difficulty-badge ${labData.difficulty}`;
+      diffBadge.textContent = labData.difficulty;
+      badgeContainer.appendChild(diffBadge);
+
+      // Time estimate
+      if (labData.estimatedTime) {
+        const timeBadge = document.createElement('span');
+        timeBadge.className = 'time-badge';
+        timeBadge.textContent = labData.estimatedTime;
+        badgeContainer.appendChild(timeBadge);
+      }
+
+      title.appendChild(badgeContainer);
+    });
+  } catch (error) {
+    console.warn('Failed to load lab metadata:', error);
+  }
+}
+
+// Collapsible Nav Groups
+function makeNavGroupsCollapsible() {
+  document.querySelectorAll('.nav-group').forEach(group => {
+    const header = group.querySelector('h2');
+    if (!header) return;
+
+    const sectionName = header.textContent.trim();
+
+    header.addEventListener('click', () => {
+      group.classList.toggle('collapsed');
+
+      // Save state
+      const collapsed = group.classList.contains('collapsed');
+      try {
+        localStorage.setItem(`nav-collapsed-${sectionName}`, collapsed);
+      } catch (e) {}
+    });
+
+    // Restore state
+    try {
+      const saved = localStorage.getItem(`nav-collapsed-${sectionName}`);
+      if (saved === 'true') {
+        group.classList.add('collapsed');
+      }
+    } catch (e) {}
+  });
+}
+
+// Initialize all Phase 1 enhancements
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function() {
+    highlightActiveNav();
+    renderBreadcrumbs();
+    addDifficultyBadges();
+    makeNavGroupsCollapsible();
+  });
+} else {
+  highlightActiveNav();
+  renderBreadcrumbs();
+  addDifficultyBadges();
+  makeNavGroupsCollapsible();
+}

@@ -1,0 +1,76 @@
+{
+  "labs": {
+    "xss-reflected": {
+      "difficulty": "beginner",
+      "category": "A03",
+      "estimatedTime": "10min",
+      "prerequisites": []
+    },
+    "sqli-error": {
+      "difficulty": "beginner",
+      "category": "A03",
+      "estimatedTime": "15min",
+      "prerequisites": []
+    },
+    "idor": {
+      "difficulty": "beginner",
+      "category": "A01",
+      "estimatedTime": "10min",
+      "prerequisites": []
+    },
+    "localstorage": {
+      "difficulty": "beginner",
+      "category": "CLIENT",
+      "estimatedTime": "5min",
+      "prerequisites": []
+    },
+    "secret-scanner": {
+      "difficulty": "beginner",
+      "category": "A02",
+      "estimatedTime": "15min",
+      "prerequisites": []
+    },
+    "git-exposure": {
+      "difficulty": "intermediate",
+      "category": "A05",
+      "estimatedTime": "20min",
+      "prerequisites": ["secret-scanner"]
+    },
+    "env-file": {
+      "difficulty": "beginner",
+      "category": "A05",
+      "estimatedTime": "10min",
+      "prerequisites": []
+    },
+    "cors": {
+      "difficulty": "intermediate",
+      "category": "A05",
+      "estimatedTime": "25min",
+      "prerequisites": []
+    },
+    "upload": {
+      "difficulty": "intermediate",
+      "category": "A03",
+      "estimatedTime": "30min",
+      "prerequisites": ["input-validation"]
+    },
+    "input-validation": {
+      "difficulty": "intermediate",
+      "category": "A03",
+      "estimatedTime": "20min",
+      "prerequisites": []
+    },
+    "security-headers": {
+      "difficulty": "beginner",
+      "category": "A05",
+      "estimatedTime": "15min",
+      "prerequisites": []
+    },
+    "clickjacking": {
+      "difficulty": "intermediate",
+      "category": "A05",
+      "estimatedTime": "20min",
+      "prerequisites": ["security-headers"]
+    }
+  }
+}

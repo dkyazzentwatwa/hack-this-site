@@ -1,0 +1,421 @@
+{
+  "xss-reflected": {
+    "what": "Reflected Cross-Site Scripting (XSS) occurs when user input is immediately echoed back into a web page without proper sanitization or encoding. The malicious script is 'reflected' off the server in the response.",
+    "why": "Attackers can steal session cookies, perform actions as the victim, redirect to malicious sites, or deface web pages. This vulnerability allows complete control over what the victim sees and does on the website.",
+    "impact": "CVSS 6.1 (Medium) - OWASP A03: Injection",
+    "hints": [
+      {
+        "level": 1,
+        "title": "Beginner Hint",
+        "text": "Try adding a simple <script> tag to the URL query parameter. Look at what gets reflected in the page."
+      },
+      {
+        "level": 2,
+        "title": "Intermediate Hint",
+        "text": "If <script> tags are blocked, try using event handlers like 'onerror' or 'onload' on HTML elements like <img>."
+      },
+      {
+        "level": 3,
+        "title": "Solution",
+        "text": "Payload: <img src=x onerror=alert(document.domain)> - This creates an image tag that triggers JavaScript when the image fails to load."
+      }
+    ],
+    "fix": {
+      "insecure": "element.innerHTML = userInput;",
+      "secure": "element.textContent = userInput;\n// or use a sanitization library:\n// element.innerHTML = DOMPurify.sanitize(userInput);"
+    },
+    "steps": [
+      "Open your browser's Developer Tools (F12) and go to the Console tab",
+      "Try entering <script>alert('XSS')</script> in the search parameter",
+      "If that's blocked, try an event handler: <img src=x onerror=alert(1)>",
+      "Observe the JavaScript alert() confirming successful XSS execution",
+      "Check the page source to see how your input was reflected unsafely"
+    ],
+    "related": ["cors", "input-validation"]
+  },
+
+  "sqli-error": {
+    "what": "SQL Injection occurs when user input is directly concatenated into SQL queries without proper sanitization, allowing attackers to manipulate database queries.",
+    "why": "Attackers can extract sensitive data, modify or delete database records, bypass authentication, or in some cases execute operating system commands. This is one of the most critical web vulnerabilities.",
+    "impact": "CVSS 9.8 (Critical) - OWASP A03: Injection",
+    "hints": [
+      {
+        "level": 1,
+        "title": "Beginner Hint",
+        "text": "Try adding a single quote (') to the input field and observe the error message."
+      },
+      {
+        "level": 2,
+        "title": "Intermediate Hint",
+        "text": "Use SQL keywords like 'OR', 'UNION', or 'SELECT' to manipulate the query logic."
+      },
+      {
+        "level": 3,
+        "title": "Solution",
+        "text": "Payload: ' OR '1'='1 - This makes the WHERE clause always true, potentially returning all records."
+      }
+    ],
+    "fix": {
+      "insecure": "query = \"SELECT * FROM users WHERE id = \" + userInput;",
+      "secure": "query = \"SELECT * FROM users WHERE id = ?\";\npreparedStatement.setInt(1, userInput);\n// Always use parameterized queries!"
+    },
+    "steps": [
+      "Enter a single quote (') in the input field",
+      "Observe the SQL error message that reveals query structure",
+      "Try basic SQLi payloads like: ' OR '1'='1",
+      "Test UNION-based injection: ' UNION SELECT NULL--",
+      "Analyze error messages to understand the database structure"
+    ],
+    "related": ["input-validation"]
+  },
+
+  "idor": {
+    "what": "Insecure Direct Object Reference (IDOR) occurs when an application exposes a direct reference to an internal object (like a database key) without proper authorization checks, allowing attackers to access other users' data.",
+    "why": "Attackers can view, modify, or delete other users' sensitive information simply by changing ID parameters in URLs or requests. This is a broken access control vulnerability.",
+    "impact": "CVSS 7.5 (High) - OWASP A01: Broken Access Control",
+    "hints": [
+      {
+        "level": 1,
+        "title": "Beginner Hint",
+        "text": "Notice the order ID in the URL. What happens if you change it to a different number?"
+      },
+      {
+        "level": 2,
+        "title": "Intermediate Hint",
+        "text": "Try sequential numbers: 1001, 1002, 1003. The application isn't checking if you own these orders!"
+      },
+      {
+        "level": 3,
+        "title": "Solution",
+        "text": "Change the order ID to 1002 or 1003 to access other users' order data. No authentication required!"
+      }
+    ],
+    "fix": {
+      "insecure": "SELECT * FROM orders WHERE id = $userId;",
+      "secure": "SELECT * FROM orders WHERE id = $orderId AND user_id = $currentUserId;\n// Always check ownership!"
+    },
+    "steps": [
+      "Note the current order ID in the URL parameter",
+      "Try changing it to 1001, then 1002, then 1003",
+      "Observe that you can access orders from different users",
+      "Check the returned data - does it belong to you?",
+      "This demonstrates missing authorization checks"
+    ],
+    "related": ["secret-scanner"]
+  },
+
+  "localstorage": {
+    "what": "Sensitive data stored in browser localStorage or sessionStorage can be accessed by any JavaScript running on the page, including malicious scripts injected via XSS attacks.",
+    "why": "If authentication tokens, API keys, or personal data are stored in browser storage, XSS attackers can steal them instantly. This data persists even after the user closes the browser.",
+    "impact": "CVSS 5.3 (Medium) - OWASP A02: Cryptographic Failures",
+    "hints": [
+      {
+        "level": 1,
+        "title": "Beginner Hint",
+        "text": "Click the 'Dump Storage' button to see what's in localStorage and sessionStorage."
+      },
+      {
+        "level": 2,
+        "title": "Intermediate Hint",
+        "text": "Open Browser DevTools → Application tab → Local Storage to inspect manually."
+      },
+      {
+        "level": 3,
+        "title": "Solution",
+        "text": "The dump will reveal API keys, tokens, and other sensitive data that should never be client-side."
+      }
+    ],
+    "fix": {
+      "insecure": "localStorage.setItem('authToken', token);\nlocalStorage.setItem('api_key', key);",
+      "secure": "// Use httpOnly cookies for sensitive data:\n// Set-Cookie: session=abc123; HttpOnly; Secure; SameSite=Strict\n// Never store secrets in localStorage!"
+    },
+    "steps": [
+      "Click the 'Dump LocalStorage' button",
+      "Examine the output for sensitive data",
+      "Open DevTools → Application → Local Storage",
+      "Note any API keys, tokens, or personal information",
+      "Remember: any JavaScript can read this data!"
+    ],
+    "related": ["xss-reflected", "secret-scanner"]
+  },
+
+  "secret-scanner": {
+    "what": "Hardcoded secrets in client-side code (JavaScript, HTML comments, or page source) are exposed to anyone who views the page source. This includes API keys, tokens, passwords, and internal URLs.",
+    "why": "Attackers can steal API keys to access paid services on your dime, gain unauthorized access to internal systems, or escalate privileges using exposed credentials.",
+    "impact": "CVSS 7.5 (High) - OWASP A02: Cryptographic Failures",
+    "hints": [
+      {
+        "level": 1,
+        "title": "Beginner Hint",
+        "text": "View the page source (Ctrl+U or Cmd+U) and look for comments or embedded secrets."
+      },
+      {
+        "level": 2,
+        "title": "Intermediate Hint",
+        "text": "Search for keywords like 'API', 'key', 'secret', 'password', 'token' in the source code."
+      },
+      {
+        "level": 3,
+        "title": "Solution",
+        "text": "Check HTML comments, JavaScript variables (window.APP_CONFIG), and inline scripts for exposed secrets."
+      }
+    ],
+    "fix": {
+      "insecure": "const API_KEY = 'sk_live_abc123';\n// Secret exposed in client code!",
+      "secure": "// Never put secrets in client-side code!\n// Use environment variables on the server:\nconst response = await fetch('/api/data', {\n  // Server handles API key internally\n});"
+    },
+    "steps": [
+      "Right-click the page and select 'View Page Source'",
+      "Search (Ctrl+F) for: API, key, secret, password, token",
+      "Check HTML comments <!-- --> for hidden data",
+      "Open DevTools Console and inspect global variables",
+      "Look for configuration objects like window.APP_CONFIG"
+    ],
+    "related": ["localstorage", "git-exposure"]
+  },
+
+  "git-exposure": {
+    "what": "Exposed .git directories allow attackers to download the entire source code repository, including commit history, configuration files, and potentially hardcoded credentials.",
+    "why": "Attackers can reconstruct your entire codebase, find vulnerabilities by reading the source, and extract secrets from commit history even if they've been removed in recent commits.",
+    "impact": "CVSS 7.5 (High) - OWASP A05: Security Misconfiguration",
+    "hints": [
+      {
+        "level": 1,
+        "title": "Beginner Hint",
+        "text": "Try accessing /.git/config or /.git/HEAD in your browser."
+      },
+      {
+        "level": 2,
+        "title": "Intermediate Hint",
+        "text": "If .git is exposed, you can reconstruct the repository using tools like git-dumper."
+      },
+      {
+        "level": 3,
+        "title": "Solution",
+        "text": "Navigate to /.git/config to confirm exposure. Real attackers would download the full repo."
+      }
+    ],
+    "fix": {
+      "insecure": "# .git directory publicly accessible\n# Server serves all files",
+      "secure": "# In .htaccess or nginx config:\nRedirectMatch 404 /\\.git\n# Or ensure .git is outside web root!"
+    },
+    "steps": [
+      "Try accessing /.git/config in your browser",
+      "Check if /.git/HEAD returns content",
+      "In production, use tools like git-dumper to extract the full repo",
+      "Review extracted files for hardcoded secrets",
+      "Check git history for removed but still visible secrets"
+    ],
+    "related": ["secret-scanner", "env-file"]
+  },
+
+  "env-file": {
+    "what": "Exposed .env files contain environment variables with database credentials, API keys, and other sensitive configuration that should never be public.",
+    "why": "Database passwords, AWS keys, and API tokens in .env files give attackers complete access to your backend systems and third-party services.",
+    "impact": "CVSS 9.1 (Critical) - OWASP A05: Security Misconfiguration",
+    "hints": [
+      {
+        "level": 1,
+        "title": "Beginner Hint",
+        "text": "Try accessing /.env in your browser URL."
+      },
+      {
+        "level": 2,
+        "title": "Intermediate Hint",
+        "text": "Look for database credentials, API keys, and secret keys in the .env file."
+      },
+      {
+        "level": 3,
+        "title": "Solution",
+        "text": "Navigate to /.env and view the exposed credentials. Never deploy .env to production!"
+      }
+    ],
+    "fix": {
+      "insecure": "# .env file in web root\n# Accessible via HTTP",
+      "secure": "# Add to .gitignore:\n.env\n.env.*\n\n# Block in web server:\nlocation ~ /\\.env {\n  deny all;\n}"
+    },
+    "steps": [
+      "Navigate to /.env in the browser",
+      "Examine the exposed environment variables",
+      "Note database passwords, API keys, JWT secrets",
+      "In real scenarios, these could be used to compromise the entire system",
+      "Always keep .env files outside the web root!"
+    ],
+    "related": ["git-exposure", "secret-scanner"]
+  },
+
+  "cors": {
+    "what": "Cross-Origin Resource Sharing (CORS) misconfiguration occurs when a website allows any origin to make authenticated requests, enabling attackers to steal user data from malicious websites.",
+    "why": "An attacker can create a malicious website that makes requests to your API on behalf of logged-in users, stealing their data or performing actions without their knowledge.",
+    "impact": "CVSS 6.5 (Medium) - OWASP A05: Security Misconfiguration",
+    "hints": [
+      {
+        "level": 1,
+        "title": "Beginner Hint",
+        "text": "Check the Network tab in DevTools for 'Access-Control-Allow-Origin' headers in the response."
+      },
+      {
+        "level": 2,
+        "title": "Intermediate Hint",
+        "text": "Look for 'Access-Control-Allow-Origin: *' combined with 'Access-Control-Allow-Credentials: true'."
+      },
+      {
+        "level": 3,
+        "title": "Solution",
+        "text": "The API allows all origins (*) with credentials - a dangerous combination that enables data theft."
+      }
+    ],
+    "fix": {
+      "insecure": "Access-Control-Allow-Origin: *\nAccess-Control-Allow-Credentials: true",
+      "secure": "Access-Control-Allow-Origin: https://trusted-domain.com\nAccess-Control-Allow-Credentials: true\n// Never use * with credentials!"
+    },
+    "steps": [
+      "Open DevTools → Network tab",
+      "Make a request to the /api/cors endpoint",
+      "Inspect the response headers",
+      "Look for Access-Control-Allow-Origin: *",
+      "Note the security violation when combined with credentials"
+    ],
+    "related": ["xss-reflected"]
+  },
+
+  "upload": {
+    "what": "File upload vulnerabilities occur when applications don't properly validate uploaded files, allowing attackers to upload malicious files (shells, scripts) and execute them on the server.",
+    "why": "Attackers can gain complete control of the server by uploading and executing malicious code, leading to data breaches, ransomware, or using the server for attacks.",
+    "impact": "CVSS 8.8 (High) - OWASP A03: Injection",
+    "hints": [
+      {
+        "level": 1,
+        "title": "Beginner Hint",
+        "text": "Try uploading a file with a double extension like 'shell.php.jpg'."
+      },
+      {
+        "level": 2,
+        "title": "Intermediate Hint",
+        "text": "Test MIME type validation by changing the Content-Type header while keeping a dangerous extension."
+      },
+      {
+        "level": 3,
+        "title": "Solution",
+        "text": "Use double extensions, null bytes (file.php%00.jpg), or path traversal (../../shell.php) to bypass filters."
+      }
+    ],
+    "fix": {
+      "insecure": "if (file.extension == '.jpg') {\n  save(file);\n}",
+      "secure": "// Whitelist allowed extensions\n// Check file content (magic bytes)\n// Rename files (UUID)\n// Store outside web root\n// Use virus scanning"
+    },
+    "steps": [
+      "Try uploading a normal image file first",
+      "Then try shell.php.jpg (double extension)",
+      "Test file.php%00.jpg (null byte injection)",
+      "Try ../../../shell.php (path traversal)",
+      "Observe which bypass techniques work"
+    ],
+    "related": ["input-validation"]
+  },
+
+  "input-validation": {
+    "what": "Input validation vulnerabilities occur when applications don't properly sanitize or validate user input, allowing special characters and encoding to bypass security filters.",
+    "why": "Improper validation enables SQL injection, XSS, path traversal, and other injection attacks. Every input is a potential attack vector.",
+    "impact": "CVSS 7.3 (High) - OWASP A03: Injection",
+    "hints": [
+      {
+        "level": 1,
+        "title": "Beginner Hint",
+        "text": "Try URL encoding special characters: %2e%2e%2f for ../"
+      },
+      {
+        "level": 2,
+        "title": "Intermediate Hint",
+        "text": "Test double encoding, null bytes (%00), and Unicode normalization bypasses."
+      },
+      {
+        "level": 3,
+        "title": "Solution",
+        "text": "Use payloads like: %2e%2e%2f, ....//,  ..;/, or %00 to bypass basic filters."
+      }
+    ],
+    "fix": {
+      "insecure": "if (input.contains('..')) {\n  block();\n}",
+      "secure": "// Whitelist allowed characters\n// Normalize input\n// Use path libraries\nconst safe = path.normalize(input);\nif (!safe.startsWith('/allowed/')) deny();"
+    },
+    "steps": [
+      "Test basic characters that should be blocked",
+      "Try URL encoding: %2e for . or %2f for /",
+      "Test double encoding: %252e for %2e",
+      "Try null byte injection: payload%00.txt",
+      "Observe which encoding bypasses work"
+    ],
+    "related": ["sqli-error", "xss-reflected", "upload"]
+  },
+
+  "security-headers": {
+    "what": "Missing security headers leave web applications vulnerable to clickjacking, XSS, and other client-side attacks that proper HTTP headers could prevent.",
+    "why": "Headers like Content-Security-Policy, X-Frame-Options, and Strict-Transport-Security provide defense-in-depth against various attack vectors.",
+    "impact": "CVSS 5.3 (Medium) - OWASP A05: Security Misconfiguration",
+    "hints": [
+      {
+        "level": 1,
+        "title": "Beginner Hint",
+        "text": "Open DevTools → Network tab and check the response headers for security-related headers."
+      },
+      {
+        "level": 2,
+        "title": "Intermediate Hint",
+        "text": "Look for missing headers: Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Strict-Transport-Security."
+      },
+      {
+        "level": 3,
+        "title": "Solution",
+        "text": "The application is missing critical security headers, making it vulnerable to XSS, clickjacking, and MITM attacks."
+      }
+    ],
+    "fix": {
+      "insecure": "// No security headers set",
+      "secure": "Content-Security-Policy: default-src 'self'\nX-Frame-Options: DENY\nX-Content-Type-Options: nosniff\nStrict-Transport-Security: max-age=31536000\nReferrer-Policy: no-referrer"
+    },
+    "steps": [
+      "Open DevTools → Network tab",
+      "Load the page and select the document request",
+      "Click on the 'Headers' tab",
+      "Check for presence of security headers",
+      "Note which critical headers are missing"
+    ],
+    "related": ["xss-reflected", "clickjacking"]
+  },
+
+  "clickjacking": {
+    "what": "Clickjacking (UI redressing) tricks users into clicking on something different from what they perceive, typically by overlaying an invisible iframe over legitimate UI elements.",
+    "why": "Attackers can trick users into performing unintended actions like changing account settings, authorizing payments, or granting permissions without their knowledge.",
+    "impact": "CVSS 4.3 (Medium) - OWASP A05: Security Misconfiguration",
+    "hints": [
+      {
+        "level": 1,
+        "title": "Beginner Hint",
+        "text": "Check if the page can be loaded in an iframe by examining the X-Frame-Options header."
+      },
+      {
+        "level": 2,
+        "title": "Intermediate Hint",
+        "text": "If X-Frame-Options is missing or set to ALLOW, the page is vulnerable to clickjacking."
+      },
+      {
+        "level": 3,
+        "title": "Solution",
+        "text": "The missing X-Frame-Options header allows this page to be embedded in iframes on malicious sites."
+      }
+    ],
+    "fix": {
+      "insecure": "// No frame protection",
+      "secure": "X-Frame-Options: DENY\n// or:\nContent-Security-Policy: frame-ancestors 'none'"
+    },
+    "steps": [
+      "Check response headers for X-Frame-Options",
+      "Try embedding the page in an iframe",
+      "Note that it loads successfully (vulnerability confirmed)",
+      "Understand how an attacker would overlay invisible elements",
+      "Consider impact on sensitive actions (transfers, deletions)"
+    ],
+    "related": ["security-headers"]
+  }
+}

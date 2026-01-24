@@ -6,6 +6,7 @@
   <title>CORS Lab - VulnLab Academy</title>
   <link rel="stylesheet" href="/assets/styles.css">
   <script src="/assets/app.js"></script>
+  <script src="/assets/lab-content.js"></script>
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 </head>
 <body>
@@ -21,23 +22,136 @@
     </aside>
     <main class="main">
       <h2 class="section-title">A05-006 CORS Misconfiguration</h2>
-      <div class="lab">
+      <div class="lab" data-lab-id="cors">
         <div>
           <h3>Insecure CORS Endpoint</h3>
           <p>Allows wildcard origin with credentials.</p>
-          <button type="button" onclick="checkCors()">Call /api/cors</button>
+          <div style="display:flex; gap:8px;">
+            <button type="button" onclick="checkCors()">Call /api/cors</button>
+            <button type="button" class="validate-btn" onclick="validateCORS()">Validate Solution</button>
+          </div>
         </div>
         <div>
           <pre id="cors-output" class="notice mono">Output...</pre>
+          <div id="validation-result"></div>
         </div>
+      </div>
+
+      <div class="lab-demo" style="margin-top: 24px; padding: 20px; background: rgba(255, 90, 90, 0.1); border: 1px solid rgba(255, 90, 90, 0.3); border-radius: 10px;">
+        <h3 style="margin-top: 0; color: var(--danger);">⚠️ Cross-Origin Attack Demo</h3>
+        <p>This demonstrates how an attacker's site could steal your data due to CORS misconfiguration:</p>
+
+        <button type="button" style="margin-top: 8px;" onclick="demonstrateAttack()">Simulate Attack from Evil Site</button>
+
+        <div id="attack-result" class="notice mono" style="margin-top: 12px; display: none; white-space: pre-wrap;"></div>
       </div>
     </main>
   </div>
   <script>
+    // Attach educational content
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        attachLabContent('cors');
+      });
+    } else {
+      attachLabContent('cors');
+    }
+
     function checkCors() {
       fetch('/api/cors')
         .then(function (r) { return r.text(); })
         .then(function (t) { document.getElementById('cors-output').textContent = t; });
+    }
+
+    async function validateCORS() {
+      var resultEl = document.getElementById('validation-result');
+      showLoading(resultEl);
+
+      try {
+        // Check CORS headers
+        var response = await fetch('/api/cors');
+        var allowOrigin = response.headers.get('Access-Control-Allow-Origin');
+        var allowCredentials = response.headers.get('Access-Control-Allow-Credentials');
+
+        var sessionId = localStorage.getItem('session-id') || 'session-' + Date.now();
+        localStorage.setItem('session-id', sessionId);
+
+        var foundWildcard = allowOrigin === '*';
+        var foundCredentials = allowCredentials === 'true';
+
+        var validationResponse = await fetch('/api/validate/cors?sessionId=' + sessionId +
+          '&foundWildcard=' + foundWildcard +
+          '&foundCredentials=' + foundCredentials +
+          '&demonstratedAttack=true');
+        var data = await validationResponse.json();
+
+        hideLoading(resultEl);
+
+        if (data.success) {
+          showSuccess(resultEl, data.message);
+          if (data.explanation) {
+            var explanation = document.createElement('div');
+            explanation.className = 'notice';
+            explanation.style.marginTop = '12px';
+            explanation.innerHTML = '<strong>Explanation:</strong> ' + data.explanation;
+            resultEl.appendChild(explanation);
+          }
+          if (data.nextSteps) {
+            var nextSteps = document.createElement('div');
+            nextSteps.className = 'notice';
+            nextSteps.style.marginTop = '8px';
+            nextSteps.innerHTML = '<strong>Next Steps:</strong> ' + data.nextSteps;
+            resultEl.appendChild(nextSteps);
+          }
+          markLabComplete('cors');
+        } else {
+          showError(resultEl, data.hint || 'Validation failed. Try again!');
+        }
+      } catch (error) {
+        hideLoading(resultEl);
+        showError(resultEl, 'Validation request failed. Check your connection.');
+        console.error('Validation error:', error);
+      }
+    }
+
+    async function demonstrateAttack() {
+      var resultEl = document.getElementById('attack-result');
+      resultEl.style.display = 'block';
+      resultEl.textContent = '⏳ Attacker site (evil.com) making cross-origin request...';
+
+      try {
+        // This simulates what an attacker's site would do
+        var response = await fetch('/api/cors', {
+          credentials: 'include'  // Include cookies to steal session
+        });
+
+        var allowOrigin = response.headers.get('Access-Control-Allow-Origin');
+        var allowCredentials = response.headers.get('Access-Control-Allow-Credentials');
+        var data = await response.text();
+
+        resultEl.textContent =
+          '🚨 ATTACK SUCCESSFUL!\n\n' +
+          'Evil site was able to:\n' +
+          '1. Make authenticated request to your API\n' +
+          '2. Read the response data:\n\n' +
+          data + '\n\n' +
+          'CORS Headers found:\n' +
+          '• Access-Control-Allow-Origin: ' + (allowOrigin || 'not set') + '\n' +
+          '• Access-Control-Allow-Credentials: ' + (allowCredentials || 'not set') + '\n\n' +
+          'This is possible because:\n' +
+          '• CORS allows all origins (*) or reflects origin\n' +
+          '• Credentials are allowed\n' +
+          '• No CSRF protection\n\n' +
+          'Impact: Attacker can steal sensitive data, perform actions\n' +
+          'as the victim, and access authenticated endpoints.';
+      } catch (error) {
+        resultEl.textContent =
+          '✅ Attack blocked by browser security.\n\n' +
+          'The browser prevented the cross-origin request because:\n' +
+          '• CORS policy blocks it, OR\n' +
+          '• Credentials were not allowed\n\n' +
+          'Error: ' + error.message;
+      }
     }
   </script>
 </body>
