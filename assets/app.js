@@ -443,3 +443,206 @@ if (document.readyState === 'loading') {
   addDifficultyBadges();
   makeNavGroupsCollapsible();
 }
+
+// ============================================================================
+// PHASE 3: ENHANCED UX - SEARCH, FILTER, PROGRESS DASHBOARD
+// ============================================================================
+
+// Search & Filter System
+function initializeLabSearch() {
+  const searchInput = document.getElementById('lab-search');
+  const filterButtons = document.querySelectorAll('.filter-btn');
+  const allLabs = document.querySelectorAll('.card[data-lab-id]');
+
+  if (!searchInput || allLabs.length === 0) return;
+
+  let currentFilter = 'all';
+  let currentSearch = '';
+
+  function updateDisplay() {
+    let visibleCount = 0;
+
+    allLabs.forEach(lab => {
+      const labId = lab.getAttribute('data-lab-id');
+      const text = lab.textContent.toLowerCase();
+
+      // Check search match
+      const searchMatch = !currentSearch || text.includes(currentSearch);
+
+      // Check filter match
+      const filterMatch = currentFilter === 'all' ||
+                          text.includes(currentFilter.toLowerCase()) ||
+                          lab.classList.contains(currentFilter);
+
+      const shouldShow = searchMatch && filterMatch;
+      lab.style.display = shouldShow ? '' : 'none';
+      if (shouldShow) visibleCount++;
+    });
+
+    updateResultsCount(visibleCount, allLabs.length);
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      currentSearch = e.target.value.toLowerCase().trim();
+      updateDisplay();
+    });
+  }
+
+  filterButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter = btn.getAttribute('data-filter');
+      updateDisplay();
+    });
+  });
+
+  // Initial display
+  updateDisplay();
+}
+
+function updateResultsCount(visible, total) {
+  let countEl = document.getElementById('search-results-count');
+  if (!countEl) return;
+
+  if (visible === total) {
+    countEl.textContent = '';
+  } else {
+    countEl.textContent = `Showing ${visible} of ${total} labs`;
+  }
+}
+
+// Progress Dashboard
+async function updateProgressDashboard() {
+  const completedLabsEl = document.getElementById('labs-completed');
+  const totalLabsEl = document.getElementById('labs-total');
+  const percentageEl = document.getElementById('completion-percentage');
+  const streakEl = document.getElementById('current-streak');
+  const progressBar = document.getElementById('overall-progress-bar');
+  const categoryBreakdown = document.getElementById('category-breakdown');
+
+  // Check if dashboard elements exist
+  if (!completedLabsEl) return;
+
+  const completed = JSON.parse(localStorage.getItem('completed-labs') || '[]');
+  const timestamps = JSON.parse(localStorage.getItem('lab-timestamps') || '{}');
+
+  // Load metadata
+  let metadata;
+  try {
+    const response = await fetch('/data/lab-metadata.json');
+    metadata = await response.json();
+  } catch (error) {
+    console.warn('Failed to load lab metadata:', error);
+    return;
+  }
+
+  const totalLabs = Object.keys(metadata.labs).length;
+
+  // Update stats
+  completedLabsEl.textContent = completed.length;
+  totalLabsEl.textContent = totalLabs;
+
+  const percentage = totalLabs > 0 ? Math.round((completed.length / totalLabs) * 100) : 0;
+  percentageEl.textContent = percentage + '%';
+
+  // Update progress bar
+  if (progressBar) {
+    progressBar.style.width = percentage + '%';
+  }
+
+  // Calculate streak
+  const streak = calculateStreak(timestamps);
+  streakEl.textContent = streak;
+
+  // Category breakdown
+  if (categoryBreakdown) {
+    const categories = {};
+    completed.forEach(labId => {
+      const labData = metadata.labs[labId];
+      if (labData) {
+        const cat = labData.category;
+        categories[cat] = (categories[cat] || 0) + 1;
+      }
+    });
+
+    renderCategoryBreakdown(categories, metadata, categoryBreakdown);
+  }
+}
+
+function calculateStreak(timestamps) {
+  const dates = Object.values(timestamps)
+    .map(ts => new Date(ts).toDateString())
+    .sort()
+    .reverse();
+
+  if (dates.length === 0) return 0;
+
+  let streak = 1;
+  const today = new Date().toDateString();
+
+  if (dates[0] !== today) {
+    const yesterday = new Date(Date.now() - 86400000).toDateString();
+    if (dates[0] !== yesterday) return 0;
+  }
+
+  for (let i = 1; i < dates.length; i++) {
+    const current = new Date(dates[i]);
+    const previous = new Date(dates[i-1]);
+    const diffDays = (previous - current) / 86400000;
+
+    if (diffDays <= 1) {
+      streak++;
+    } else {
+      break;
+    }
+  }
+
+  return streak;
+}
+
+function renderCategoryBreakdown(categories, metadata, container) {
+  container.innerHTML = '<h3>Progress by Category</h3>';
+
+  const categoryTotals = {};
+  Object.values(metadata.labs).forEach(lab => {
+    const cat = lab.category;
+    categoryTotals[cat] = (categoryTotals[cat] || 0) + 1;
+  });
+
+  const grid = document.createElement('div');
+  grid.className = 'category-grid';
+
+  Object.entries(categoryTotals).forEach(([category, total]) => {
+    const completed = categories[category] || 0;
+    const percentage = Math.round((completed / total) * 100);
+
+    const card = document.createElement('div');
+    card.className = 'category-card';
+    card.innerHTML = `
+      <div class="category-name">${category}</div>
+      <div class="category-stats">
+        <span class="category-completed">${completed}/${total}</span>
+        <span class="category-percentage">${percentage}%</span>
+      </div>
+      <div class="category-progress-bar">
+        <div class="category-progress-fill" style="width: ${percentage}%"></div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+
+  container.appendChild(grid);
+}
+
+// Initialize Phase 3 features
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function() {
+    initializeLabSearch();
+    updateProgressDashboard();
+  });
+} else {
+  initializeLabSearch();
+  updateProgressDashboard();
+}

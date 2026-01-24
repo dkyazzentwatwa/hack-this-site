@@ -13,6 +13,7 @@
   <script src="/assets/vendor/jquery-1.12.4.min.js"></script>
   <script src="/assets/vendor/angular-1.6.9.min.js"></script>
   <script src="/assets/app.js"></script>
+  <script src="/assets/lab-content.js"></script>
   <!-- TODO: Remove exposed test keys before production -->
   <!-- SECRET: staging_admin_password=admin123 -->
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
@@ -79,45 +80,101 @@
         </div>
       </section>
 
+      <section class="progress-dashboard">
+        <h2>Your Progress</h2>
+
+        <div class="progress-summary">
+          <div class="stat-card">
+            <div class="stat-number" id="labs-completed">0</div>
+            <div class="stat-label">Labs Completed</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-number" id="labs-total">12</div>
+            <div class="stat-label">Total Labs</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-number" id="completion-percentage">0%</div>
+            <div class="stat-label">Progress</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-number" id="current-streak">0</div>
+            <div class="stat-label">Day Streak</div>
+          </div>
+        </div>
+
+        <div class="progress-bar-container">
+          <div class="progress-bar" id="overall-progress-bar" style="width: 0%"></div>
+        </div>
+
+        <div class="category-breakdown" id="category-breakdown">
+          <!-- Populated by JavaScript -->
+        </div>
+      </section>
+
+      <div class="lab-controls">
+        <input
+          type="search"
+          id="lab-search"
+          class="search-input"
+          placeholder="🔍 Search labs by name, category, or tag..."
+          aria-label="Search labs"
+        />
+
+        <div class="filter-bar">
+          <button class="filter-btn active" data-filter="all">All Labs</button>
+          <button class="filter-btn" data-filter="beginner">Beginner</button>
+          <button class="filter-btn" data-filter="intermediate">Intermediate</button>
+          <button class="filter-btn" data-filter="A01">A01 Access Control</button>
+          <button class="filter-btn" data-filter="A03">A03 Injection</button>
+          <button class="filter-btn" data-filter="A05">A05 Misconfig</button>
+          <button class="filter-btn" data-filter="CLIENT">Client-Side</button>
+        </div>
+
+        <div id="search-results-count" class="results-count"></div>
+      </div>
+
       <h2 class="section-title">Tier 1 Labs (Priority)</h2>
       <div class="grid">
-        <a class="card" href="/labs/xss-reflected.html">
+        <a class="card" href="/labs/xss-reflected.html" data-lab-id="xss-reflected">
           <h3>A03-006 Reflected XSS</h3>
           <p>DOM-based reflection with innerHTML sinks and URL inputs.</p>
         </a>
-        <a class="card" href="/labs/sqli-error.html">
+        <a class="card" href="/labs/sqli-error.html" data-lab-id="sqli-error">
           <h3>A03-001 SQLi Error</h3>
           <p>Simulated SQL error messages based on payload patterns.</p>
         </a>
-        <a class="card" href="/labs/idor.html">
+        <a class="card" href="/labs/idor.html" data-lab-id="idor">
           <h3>A01-001 IDOR</h3>
           <p>Direct object access by ID with no authorization.</p>
         </a>
-        <a class="card" href="/labs/localstorage.html">
+        <a class="card" href="/labs/localstorage.html" data-lab-id="localstorage">
           <h3>STORAGE-001 LocalStorage</h3>
           <p>Seeds secrets into browser storage for audit scripts.</p>
         </a>
-        <a class="card" href="/labs/secret-scanner.html">
+        <a class="card" href="/labs/secret-scanner.html" data-lab-id="secret-scanner">
           <h3>A02-002 Secret Scanner</h3>
           <p>Secrets embedded in comments, JS, and globals.</p>
         </a>
-        <a class="card" href="/labs/git-exposure.html">
+        <a class="card" href="/labs/git-exposure.html" data-lab-id="git-exposure">
           <h3>VULN-007 Git Exposure</h3>
           <p>Exposed repository metadata for detection.</p>
         </a>
-        <a class="card" href="/labs/env-file.html">
+        <a class="card" href="/labs/env-file.html" data-lab-id="env-file">
           <h3>VULN-008 Env File Finder</h3>
           <p>Environment file exposure artifacts.</p>
         </a>
-        <a class="card" href="/labs/upload.html">
+        <a class="card" href="/labs/upload.html" data-lab-id="upload">
           <h3>VULN-004 File Upload</h3>
           <p>Extension and MIME bypass testing.</p>
         </a>
-        <a class="card" href="/labs/cors.html">
+        <a class="card" href="/labs/cors.html" data-lab-id="cors">
           <h3>A05-006 CORS Misconfig</h3>
           <p>Wildcard origin with credentials.</p>
         </a>
-        <a class="card" href="/labs/input-validation.html">
+        <a class="card" href="/labs/input-validation.html" data-lab-id="input-validation">
           <h3>INPUT-001 Validation</h3>
           <p>Null byte, double encoding, CRLF.</p>
         </a>
