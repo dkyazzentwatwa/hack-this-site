@@ -68,45 +68,16 @@
         }
 
         async function validateIDOR() {
-          var orderId = document.getElementById('order').value;
+          var orderId = document.getElementById('order').value.trim();
           var resultEl = document.getElementById('validation-result');
-
-          showLoading(resultEl);
-
+          // Capture the owner of the order you accessed as proof of the IDOR.
+          var owner = '';
           try {
-            var sessionId = localStorage.getItem('session-id') || 'session-' + Date.now();
-            localStorage.setItem('session-id', sessionId);
-
-            var response = await fetch('/api/validate/idor?orderId=' + encodeURIComponent(orderId) + '&sessionId=' + sessionId);
-            var data = await response.json();
-
-            hideLoading(resultEl);
-
-            if (data.success) {
-              showSuccess(resultEl, data.message);
-              if (data.explanation) {
-                var explanation = document.createElement('div');
-                explanation.className = 'notice';
-                explanation.style.marginTop = '12px';
-                explanation.innerHTML = '<strong>Explanation:</strong> ' + data.explanation;
-                resultEl.appendChild(explanation);
-              }
-              if (data.nextSteps) {
-                var nextSteps = document.createElement('div');
-                nextSteps.className = 'notice';
-                nextSteps.style.marginTop = '8px';
-                nextSteps.innerHTML = '<strong>Next Steps:</strong> ' + data.nextSteps;
-                resultEl.appendChild(nextSteps);
-              }
-              markLabComplete('idor');
-            } else {
-              showError(resultEl, data.hint || 'Validation failed. Try again!');
-            }
-          } catch (error) {
-            hideLoading(resultEl);
-            showError(resultEl, 'Validation request failed. Check your connection.');
-            console.error('Validation error:', error);
-          }
+            var lookup = await fetch('/api/orders/' + encodeURIComponent(orderId));
+            var json = await lookup.json();
+            owner = json && json.order ? json.order.user : '';
+          } catch (e) {}
+          await submitValidation('idor', { orderId: orderId, owner: owner }, resultEl);
         }
       </script>
     </main>

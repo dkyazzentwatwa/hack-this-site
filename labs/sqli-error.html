@@ -34,9 +34,13 @@
             </div>
             <div style="display:flex; gap:8px;">
               <button type="submit">Run Query</button>
-              <button type="button" class="validate-btn" onclick="validateSQLi()">Validate Solution</button>
             </div>
           </form>
+          <div class="form-field" style="margin-top:12px;">
+            <label for="sqli-flag">Extracted flag (dump the table, then paste the FLAG{...})</label>
+            <input id="sqli-flag" type="text" placeholder="FLAG{...}">
+          </div>
+          <button type="button" class="validate-btn" onclick="validateSQLi()">Validate Solution</button>
         </div>
         <div>
           <div id="sqli-output" class="notice mono">Query OK: SELECT * FROM users WHERE id = 1</div>
@@ -62,45 +66,10 @@
         });
 
         async function validateSQLi() {
-          var payload = document.getElementById('user').value;
+          var flag = document.getElementById('sqli-flag').value;
           var resultEl = document.getElementById('validation-result');
-
-          showLoading(resultEl);
-
-          try {
-            var sessionId = localStorage.getItem('session-id') || 'session-' + Date.now();
-            localStorage.setItem('session-id', sessionId);
-
-            var response = await fetch('/api/validate/sqli-error?payload=' + encodeURIComponent(payload) + '&sessionId=' + sessionId);
-            var data = await response.json();
-
-            hideLoading(resultEl);
-
-            if (data.success) {
-              showSuccess(resultEl, data.message);
-              if (data.explanation) {
-                var explanation = document.createElement('div');
-                explanation.className = 'notice';
-                explanation.style.marginTop = '12px';
-                explanation.innerHTML = '<strong>Explanation:</strong> ' + data.explanation;
-                resultEl.appendChild(explanation);
-              }
-              if (data.nextSteps) {
-                var nextSteps = document.createElement('div');
-                nextSteps.className = 'notice';
-                nextSteps.style.marginTop = '8px';
-                nextSteps.innerHTML = '<strong>Next Steps:</strong> ' + data.nextSteps;
-                resultEl.appendChild(nextSteps);
-              }
-              markLabComplete('sqli-error');
-            } else {
-              showError(resultEl, data.hint || 'Validation failed. Try again!');
-            }
-          } catch (error) {
-            hideLoading(resultEl);
-            showError(resultEl, 'Validation request failed. Check your connection.');
-            console.error('Validation error:', error);
-          }
+          // Proof = the flag exfiltrated from the users table via injection.
+          await submitValidation('sqli-error', { flag: flag }, resultEl);
         }
       </script>
     </main>

@@ -1,67 +1,39 @@
 const { getQuery, readBody, parseJson, sendJson } = require('../_utils');
 
-const attempts = {};
-
-function getAttemptCount(sessionId, labId) {
-  if (!sessionId) return 0;
-  const key = `${sessionId}-${labId}`;
-  attempts[key] = (attempts[key] || 0) + 1;
-  return attempts[key];
-}
+// Student must (a) prove they inspected headers by reporting the leaked
+// X-AspNet-Version fingerprint, and (b) name the security headers that are missing.
+const FINGERPRINT = '4.0.30319';
+const REQUIRED_MISSING = ['content-security-policy', 'x-frame-options', 'strict-transport-security', 'x-content-type-options'];
 
 module.exports = async (req, res) => {
   const query = getQuery(req);
-  const body = await readBody(req);
-  const data = parseJson(body) || {};
-  const sessionId = query.sessionId || 'anonymous';
+  const data = parseJson(await readBody(req)) || {};
 
-  // Check which security headers they identified as missing or misconfigured
-  const foundMissingCSP = data.foundMissingCSP || query.foundMissingCSP || false;
-  const foundMissingHSTS = data.foundMissingHSTS || query.foundMissingHSTS || false;
-  const foundMissingXFrameOptions = data.foundMissingXFrameOptions || query.foundMissingXFrameOptions || false;
-  const foundMissingXContentType = data.foundMissingXContentType || query.foundMissingXContentType || false;
-  const foundWeakCSP = data.foundWeakCSP || query.foundWeakCSP || false;
-  const identifiedRisk = data.identifiedRisk || query.identifiedRisk || false;
+  const fingerprint = String(data.aspNetVersion || query.aspNetVersion || '').trim();
+  let missing = data.missing || query.missing || [];
+  if (typeof missing === 'string') missing = missing.split(',');
+  missing = missing.map(m => String(m).trim().toLowerCase()).filter(Boolean);
 
-  let score = 0;
-  if (foundMissingCSP) score += 25;
-  if (foundMissingHSTS) score += 20;
-  if (foundMissingXFrameOptions) score += 20;
-  if (foundMissingXContentType) score += 15;
-  if (foundWeakCSP) score += 25;
-  if (identifiedRisk) score += 20;
+  const fingerprintOk = fingerprint === FINGERPRINT;
+  const namedMissing = REQUIRED_MISSING.filter(h => missing.indexOf(h) !== -1);
 
-  const isValid = score >= 50;
-
-  if (isValid) {
+  if (fingerprintOk && namedMissing.length >= 3) {
     return sendJson(res, 200, {
       success: true,
-      message: "🎯 Security header vulnerabilities successfully identified!",
-      explanation: "You identified multiple missing or misconfigured security headers that weaken the application's defense.",
-      nextSteps: "Learn about implementing strong Content Security Policy (CSP) and other security headers.",
-      points: score,
+      message: '🎯 Header audit confirmed! Fingerprint leaked and ' + namedMissing.length + ' protections missing.',
+      explanation: 'The server leaks X-AspNet-Version (' + FINGERPRINT + ') and ships none of CSP, X-Frame-Options, HSTS or X-Content-Type-Options - leaving XSS, clickjacking, downgrade and MIME-sniffing wide open.',
+      nextSteps: 'Map each missing header to the attack it stops, then compare against securityheaders.com grading.',
+      points: 40 + namedMissing.length * 15,
       labId: 'security-headers'
     });
   }
 
-  let hint = "Inspect the HTTP response headers for missing security controls. ";
-  const attemptCount = getAttemptCount(sessionId, 'security-headers');
-
-  if (score === 0) {
-    hint += "Open DevTools Network tab and check for missing headers like Content-Security-Policy, X-Frame-Options, or Strict-Transport-Security.";
-  } else if (score < 50) {
-    hint += `You found some issues (score: ${score}/100). Look for additional missing or weak security headers.`;
+  let hint = 'Inspect the real response headers on /api/headers and report what you see. ';
+  if (!fingerprintOk) {
+    hint += 'First confirm the version leak: copy the exact X-AspNet-Version value from the response.';
+  } else {
+    hint += 'Good - version leak confirmed. Now name at least 3 missing headers (CSP, X-Frame-Options, HSTS, X-Content-Type-Options).';
   }
 
-  if (attemptCount > 3) {
-    hint += "\n\n💡 Need help? Check the hints in the educational content above.";
-  }
-
-  return sendJson(res, 200, {
-    success: false,
-    hint: hint,
-    attemptCount: attemptCount,
-    score: score,
-    labId: 'security-headers'
-  });
+  return sendJson(res, 200, { success: false, hint: hint, labId: 'security-headers' });
 };

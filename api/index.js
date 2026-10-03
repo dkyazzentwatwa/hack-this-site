@@ -53,6 +53,8 @@ const handlers = {
   'validate/upload': require('../server/api 2/validate/upload'),
   'validate/input-validation': require('../server/api 2/validate/input-validation'),
   'validate/security-headers': require('../server/api 2/validate/security-headers'),
+  'validate/env-file': require('../server/api 2/validate/env-file'),
+  'validate/clickjacking': require('../server/api 2/validate/clickjacking'),
 };
 
 module.exports = async (req, res) => {

@@ -77,59 +77,12 @@
 
         async function validateStorage() {
           var resultEl = document.getElementById('validation-result');
-          showLoading(resultEl);
-
-          try {
-            var data = { localStorage: {}, sessionStorage: {} };
-            for (var i = 0; i < localStorage.length; i++) {
-              var key = localStorage.key(i);
-              data.localStorage[key] = localStorage.getItem(key);
-            }
-            for (var j = 0; j < sessionStorage.length; j++) {
-              var k = sessionStorage.key(j);
-              data.sessionStorage[k] = sessionStorage.getItem(k);
-            }
-
-            var sessionId = localStorage.getItem('session-id') || 'session-' + Date.now();
-            localStorage.setItem('session-id', sessionId);
-
-            var foundApiKey = data.localStorage.api_key ? true : false;
-            var foundSessionToken = data.localStorage.session_token ? true : false;
-            var foundEmail = data.localStorage.user_email ? true : false;
-
-            var response = await fetch('/api/validate/localstorage?sessionId=' + sessionId +
-              '&foundApiKey=' + foundApiKey +
-              '&foundSessionToken=' + foundSessionToken +
-              '&foundEmail=' + foundEmail);
-            var result = await response.json();
-
-            hideLoading(resultEl);
-
-            if (result.success) {
-              showSuccess(resultEl, result.message);
-              if (result.explanation) {
-                var explanation = document.createElement('div');
-                explanation.className = 'notice';
-                explanation.style.marginTop = '12px';
-                explanation.innerHTML = '<strong>Explanation:</strong> ' + result.explanation;
-                resultEl.appendChild(explanation);
-              }
-              if (result.nextSteps) {
-                var nextSteps = document.createElement('div');
-                nextSteps.className = 'notice';
-                nextSteps.style.marginTop = '8px';
-                nextSteps.innerHTML = '<strong>Next Steps:</strong> ' + result.nextSteps;
-                resultEl.appendChild(nextSteps);
-              }
-              markLabComplete('localstorage');
-            } else {
-              showError(resultEl, result.hint || 'Validation failed. Try again!');
-            }
-          } catch (error) {
-            hideLoading(resultEl);
-            showError(resultEl, 'Validation request failed. Check your connection.');
-            console.error('Validation error:', error);
-          }
+          // Submit the actual secret values read out of localStorage as proof.
+          await submitValidation('localstorage', {
+            api_key: localStorage.getItem('api_key') || '',
+            session_token: localStorage.getItem('session_token') || '',
+            user_email: localStorage.getItem('user_email') || ''
+          }, resultEl);
         }
       </script>
     </main>

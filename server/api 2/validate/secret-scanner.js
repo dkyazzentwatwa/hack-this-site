@@ -1,63 +1,38 @@
 const { getQuery, readBody, parseJson, sendJson } = require('../_utils');
 
-const attempts = {};
-
-function getAttemptCount(sessionId, labId) {
-  if (!sessionId) return 0;
-  const key = `${sessionId}-${labId}`;
-  attempts[key] = (attempts[key] || 0) + 1;
-  return attempts[key];
-}
+// Student must submit a real secret discovered somewhere in the app
+// (.env, config backup, inline JS globals, or /api/admin/secrets).
+const KNOWN_SECRETS = [
+  'weaksecret',                    // JWT_SECRET in /.env and /api/admin/secrets
+  'passw0rd!',                     // DB_PASS in /.env
+  'sk_test_123456',                // apiKey in /api/admin/secrets
+  'sk_live_test_123456',           // window.APP_CONFIG.authTokenHint
+  'test-secret-key-do-not-use',    // window.__SECRET_KEY__
+  'akia_test_example'              // AWS_KEY shown in the lab
+];
 
 module.exports = async (req, res) => {
   const query = getQuery(req);
-  const body = await readBody(req);
-  const data = parseJson(body) || {};
-  const sessionId = query.sessionId || 'anonymous';
+  const data = parseJson(await readBody(req)) || {};
+  const secret = String(data.secret || query.secret || '').trim().toLowerCase();
 
-  // Check if they found secrets in common files
-  const foundEnvFile = data.foundEnvFile || query.foundEnvFile || false;
-  const foundConfigFile = data.foundConfigFile || query.foundConfigFile || false;
-  const foundGitFile = data.foundGitFile || query.foundGitFile || false;
-  const foundSecretInJs = data.foundSecretInJs || query.foundSecretInJs || false;
-  const foundSecretInHtml = data.foundSecretInHtml || query.foundSecretInHtml || false;
-
-  let foundCount = 0;
-  if (foundEnvFile) foundCount++;
-  if (foundConfigFile) foundCount++;
-  if (foundGitFile) foundCount++;
-  if (foundSecretInJs) foundCount++;
-  if (foundSecretInHtml) foundCount++;
-
-  const isValid = foundCount >= 1;
-
-  if (isValid) {
+  if (secret && KNOWN_SECRETS.indexOf(secret) !== -1) {
     return sendJson(res, 200, {
       success: true,
-      message: "🎯 Secret exposure successfully identified!",
-      explanation: `You found ${foundCount} exposed secret(s). This demonstrates why sensitive data should never be committed to repositories or exposed in client-side code.`,
-      nextSteps: "Try using automated tools like TruffleHog or GitLeaks to scan repositories at scale.",
-      points: foundCount * 50,
+      message: '🎯 Exposed secret confirmed!',
+      explanation: 'That credential was recoverable straight from client-side code or an exposed file - no authentication needed. Secrets must never ship to the browser or the repo.',
+      nextSteps: 'Keep hunting: there are secrets in /.env, /backup/config.old, inline window.* globals, and /api/admin/secrets. Then try scanners like TruffleHog / GitLeaks.',
+      points: 100,
       labId: 'secret-scanner'
     });
   }
 
-  let hint = "Look for exposed secrets in common files. ";
-  const attemptCount = getAttemptCount(sessionId, 'secret-scanner');
-
-  if (foundCount === 0) {
-    hint += "Check for .env files, config files, or hardcoded secrets in JavaScript/HTML files.";
+  let hint = 'Paste a real secret you found, not a description of one. ';
+  if (!secret) {
+    hint += 'Check View Source for window.APP_CONFIG / window.__SECRET_KEY__, fetch /api/admin/secrets, or open /.env.';
+  } else {
+    hint += 'That value is not one of the planted secrets. Look again in inline scripts, /.env, or /api/admin/secrets.';
   }
 
-  if (attemptCount > 3) {
-    hint += "\n\n💡 Need help? Check the hints in the educational content above.";
-  }
-
-  return sendJson(res, 200, {
-    success: false,
-    hint: hint,
-    attemptCount: attemptCount,
-    foundCount: foundCount,
-    labId: 'secret-scanner'
-  });
+  return sendJson(res, 200, { success: false, hint: hint, labId: 'secret-scanner' });
 };

@@ -65,53 +65,14 @@
 
     async function validateCORS() {
       var resultEl = document.getElementById('validation-result');
-      showLoading(resultEl);
-
+      // Read the real CORS headers off the live response and submit them as proof.
+      var acao = '', acac = '';
       try {
-        // Check CORS headers
         var response = await fetch('/api/cors');
-        var allowOrigin = response.headers.get('Access-Control-Allow-Origin');
-        var allowCredentials = response.headers.get('Access-Control-Allow-Credentials');
-
-        var sessionId = localStorage.getItem('session-id') || 'session-' + Date.now();
-        localStorage.setItem('session-id', sessionId);
-
-        var foundWildcard = allowOrigin === '*';
-        var foundCredentials = allowCredentials === 'true';
-
-        var validationResponse = await fetch('/api/validate/cors?sessionId=' + sessionId +
-          '&foundWildcard=' + foundWildcard +
-          '&foundCredentials=' + foundCredentials +
-          '&demonstratedAttack=true');
-        var data = await validationResponse.json();
-
-        hideLoading(resultEl);
-
-        if (data.success) {
-          showSuccess(resultEl, data.message);
-          if (data.explanation) {
-            var explanation = document.createElement('div');
-            explanation.className = 'notice';
-            explanation.style.marginTop = '12px';
-            explanation.innerHTML = '<strong>Explanation:</strong> ' + data.explanation;
-            resultEl.appendChild(explanation);
-          }
-          if (data.nextSteps) {
-            var nextSteps = document.createElement('div');
-            nextSteps.className = 'notice';
-            nextSteps.style.marginTop = '8px';
-            nextSteps.innerHTML = '<strong>Next Steps:</strong> ' + data.nextSteps;
-            resultEl.appendChild(nextSteps);
-          }
-          markLabComplete('cors');
-        } else {
-          showError(resultEl, data.hint || 'Validation failed. Try again!');
-        }
-      } catch (error) {
-        hideLoading(resultEl);
-        showError(resultEl, 'Validation request failed. Check your connection.');
-        console.error('Validation error:', error);
-      }
+        acao = response.headers.get('Access-Control-Allow-Origin') || '';
+        acac = response.headers.get('Access-Control-Allow-Credentials') || '';
+      } catch (e) {}
+      await submitValidation('cors', { acao: acao, acac: acac }, resultEl);
     }
 
     async function demonstrateAttack() {

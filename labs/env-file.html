@@ -6,6 +6,7 @@
   <title>Env File Exposure Lab - VulnLab Academy</title>
   <link rel="stylesheet" href="/assets/styles.css">
   <script src="/assets/app.js"></script>
+  <script src="/assets/lab-content.js"></script>
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 </head>
 <body>
@@ -22,16 +23,50 @@
     </aside>
     <main class="main">
       <h2 class="section-title">VULN-008 Environment File Finder</h2>
-      <div class="lab">
+      <div class="lab" data-lab-id="env-file">
         <div>
           <h3>Exposed Environment Data</h3>
-          <p>Config and env data are exposed.</p>
-          <div class="notice mono">/.env</div>
+          <p>Config and env data are exposed to anyone who requests them.</p>
+          <div class="notice mono">/.env &nbsp;|&nbsp; /backup/config.old</div>
+          <div style="margin-top:8px; display:flex; gap:8px;">
+            <button type="button" onclick="loadEnv()">Fetch /.env</button>
+          </div>
+          <div class="form-field" style="margin-top:12px;">
+            <label for="env-input">Paste a value from the .env file</label>
+            <input id="env-input" type="text" placeholder="e.g. a password or secret">
+          </div>
+          <button type="button" class="validate-btn" onclick="validateEnv()">Validate Solution</button>
         </div>
         <div>
-          <div class="notice">If Vercel blocks dotfiles, use /backup/config.old.</div>
+          <pre id="env-output" class="notice mono">Output...</pre>
+          <div id="validation-result"></div>
         </div>
       </div>
+      <script>
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', function () { attachLabContent('env-file'); });
+        } else {
+          attachLabContent('env-file');
+        }
+
+        function loadEnv() {
+          fetch('/.env')
+            .then(function (r) { return r.ok ? r.text() : Promise.reject(new Error('blocked')); })
+            .then(function (t) { document.getElementById('env-output').textContent = t; })
+            .catch(function () {
+              fetch('/backup/config.old')
+                .then(function (r) { return r.text(); })
+                .then(function (t) { document.getElementById('env-output').textContent = '/.env blocked, showing /backup/config.old:\n\n' + t; })
+                .catch(function () { document.getElementById('env-output').textContent = 'Could not fetch /.env or /backup/config.old.'; });
+            });
+        }
+
+        async function validateEnv() {
+          var secret = document.getElementById('env-input').value;
+          var resultEl = document.getElementById('validation-result');
+          await submitValidation('env-file', { secret: secret }, resultEl);
+        }
+      </script>
     </main>
   </div>
 </body>

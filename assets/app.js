@@ -663,3 +663,65 @@ if (document.readyState === 'loading') {
   initializeLabSearch();
   updateProgressDashboard();
 }
+
+// ============================================================================
+// SHARED LAB VALIDATION (evidence-based)
+// ============================================================================
+
+// Render a validator response into the result element.
+function renderValidation(resultEl, data, labId) {
+  if (data && data.success) {
+    showSuccess(resultEl, data.message);
+    if (data.explanation) {
+      var explanation = document.createElement('div');
+      explanation.className = 'notice';
+      explanation.style.marginTop = '12px';
+      explanation.innerHTML = '<strong>Explanation:</strong> ' + escapeHtmlText(data.explanation);
+      resultEl.appendChild(explanation);
+    }
+    if (data.nextSteps) {
+      var nextSteps = document.createElement('div');
+      nextSteps.className = 'notice';
+      nextSteps.style.marginTop = '8px';
+      nextSteps.innerHTML = '<strong>Next Steps:</strong> ' + escapeHtmlText(data.nextSteps);
+      resultEl.appendChild(nextSteps);
+    }
+    markLabComplete(labId);
+  } else {
+    showError(resultEl, (data && data.hint) || 'Validation failed. Try again!');
+  }
+}
+
+// POST evidence to a validator and render the result. Returns the parsed data.
+async function submitValidation(labId, evidence, resultEl) {
+  showLoading(resultEl);
+  try {
+    var sessionId = localStorage.getItem('session-id') || 'session-' + Date.now();
+    localStorage.setItem('session-id', sessionId);
+    var payload = Object.assign({ sessionId: sessionId }, evidence || {});
+    var res = await fetch('/api/validate/' + labId, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    var data = await res.json();
+    hideLoading(resultEl);
+    renderValidation(resultEl, data, labId);
+    return data;
+  } catch (error) {
+    hideLoading(resultEl);
+    showError(resultEl, 'Validation request failed. Is the API running (vercel dev)?');
+    console.error('Validation error:', error);
+    return null;
+  }
+}
+
+function escapeHtmlText(text) {
+  var div = document.createElement('div');
+  div.textContent = String(text == null ? '' : text);
+  return div.innerHTML;
+}
+
+// expose for inline lab scripts
+window.renderValidation = renderValidation;
+window.submitValidation = submitValidation;

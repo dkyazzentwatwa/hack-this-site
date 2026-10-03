@@ -1,70 +1,49 @@
-const { getQuery, sendJson } = require('../_utils');
+const { getQuery, readBody, parseJson, sendJson } = require('../_utils');
 
-const attempts = {};
-
-function getAttemptCount(sessionId, labId) {
-  if (!sessionId) return 0;
-  const key = `${sessionId}-${labId}`;
-  attempts[key] = (attempts[key] || 0) + 1;
-  return attempts[key];
-}
-
+// Evidence = a payload that actually employs an encoding/obfuscation bypass,
+// not a self-reported flag. The payload the student submits is the proof.
 module.exports = async (req, res) => {
   const query = getQuery(req);
-  const payload = query.payload || '';
-  const sessionId = query.sessionId || 'anonymous';
+  const data = parseJson(await readBody(req)) || {};
+  const payload = String(data.payload || query.payload || '');
 
-  // Check for common input validation bypass techniques
-  const hasSpecialChars = /[<>\"'`&;|$(){}[\]\\]/.test(payload);
-  const hasCommandInjection = /[;|&`$()]/.test(payload);
-  const hasPathTraversal = /\.\./i.test(payload);
-  const hasNullByte = /%00|\\x00/i.test(payload);
-  const hasOverflow = payload.length > 1000;
-  const hasFormatString = /%[0-9]*[sdxfn]/i.test(payload);
-  const hasUnicode = /[^\x00-\x7F]/.test(payload);
+  const checks = {
+    encodedTraversal: /%2e%2e|%2e%2e%2f|\.\.%2f|%2f\.\./i.test(payload),
+    doubleEncoding: /%25[0-9a-f]{2}/i.test(payload),
+    nullByte: /%00|\\x00|\u0000/i.test(payload),
+    altTraversal: /\.\.[\/\\]|\.\.;\/|\.\.\.\.\/\//.test(payload),
+    overlongUnicode: /%c0%ae|%e0%80%ae|%uff0e/i.test(payload),
+    crlf: /%0d|%0a|\r|\n/i.test(payload)
+  };
 
-  let bypassScore = 0;
-  if (hasSpecialChars) bypassScore += 20;
-  if (hasCommandInjection) bypassScore += 30;
-  if (hasPathTraversal) bypassScore += 25;
-  if (hasNullByte) bypassScore += 30;
-  if (hasOverflow) bypassScore += 15;
-  if (hasFormatString) bypassScore += 20;
-  if (hasUnicode) bypassScore += 15;
+  let score = 0;
+  if (checks.encodedTraversal) score += 30;
+  if (checks.doubleEncoding) score += 30;
+  if (checks.nullByte) score += 25;
+  if (checks.altTraversal) score += 20;
+  if (checks.overlongUnicode) score += 25;
+  if (checks.crlf) score += 15;
 
-  const isValid = bypassScore >= 40;
+  const used = Object.keys(checks).filter(k => checks[k]);
 
-  if (isValid) {
+  if (score >= 40) {
     return sendJson(res, 200, {
       success: true,
-      message: "🎯 Input validation bypass successfully demonstrated!",
-      explanation: "Your payload contains characters or patterns that could bypass weak input validation.",
-      nextSteps: "Explore advanced bypass techniques like encoding, obfuscation, or case manipulation.",
-      points: bypassScore,
+      message: '🎯 Encoding bypass demonstrated! Techniques: ' + used.join(', ') + '.',
+      explanation: 'Your payload hides a traversal/injection behind encoding so a naive filter that only looks for literal "../" or special characters never sees it.',
+      nextSteps: 'Chain encodings (e.g. %252e%252e%252f), mix in overlong UTF-8, and read how canonicalisation order causes these bypasses.',
+      points: Math.min(score, 100),
+      techniques: used,
       labId: 'input-validation'
     });
   }
 
-  let hint = "Try crafting input that bypasses validation filters. ";
-  const attemptCount = getAttemptCount(sessionId, 'input-validation');
-
-  if (!hasSpecialChars) {
-    hint += "Include special characters like <, >, ', \", ;, |, or &.";
-  } else if (!hasCommandInjection && !hasPathTraversal) {
-    hint += "Try command injection characters (;|&) or path traversal sequences (..).";
+  let hint = 'Submit a payload that smuggles a traversal past a naive filter. ';
+  if (!payload) {
+    hint += 'Try encoding "../" as %2e%2e%2f.';
   } else {
-    hint += "You're on the right track. Try combining multiple bypass techniques.";
+    hint += 'Too plain - layer encodings such as %2e%2e%2f, double-encoding (%252e%252e%252f), or a null byte (%00).';
   }
 
-  if (attemptCount > 3) {
-    hint += "\n\n💡 Need help? Check the hints in the educational content above.";
-  }
-
-  return sendJson(res, 200, {
-    success: false,
-    hint: hint,
-    attemptCount: attemptCount,
-    score: bypassScore,
-    labId: 'input-validation'
-  });
+  return sendJson(res, 200, { success: false, hint: hint, score: score, labId: 'input-validation' });
 };

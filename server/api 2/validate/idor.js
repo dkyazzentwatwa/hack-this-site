@@ -1,59 +1,57 @@
-const { getQuery, sendJson } = require('../_utils');
+const fs = require('fs');
+const path = require('path');
+const { getQuery, readBody, parseJson, sendJson } = require('../_utils');
 
-const attempts = {};
+// The authenticated student "owns" order 1001. A real IDOR solve means they
+// read SOMEONE ELSE'S order and can prove it by returning that order's owner.
+const USER_ORDER_ID = '1001';
 
-function getAttemptCount(sessionId, labId) {
-  if (!sessionId) return 0;
-  const key = `${sessionId}-${labId}`;
-  attempts[key] = (attempts[key] || 0) + 1;
-  return attempts[key];
+function loadOrders() {
+  try {
+    const dataPath = path.join(process.cwd(), 'data', 'orders.json');
+    return JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+  } catch (e) {
+    return [];
+  }
 }
 
 module.exports = async (req, res) => {
   const query = getQuery(req);
-  const orderId = query.orderId || '';
-  const sessionId = query.sessionId || 'anonymous';
+  const data = parseJson(await readBody(req)) || {};
+  const orderId = String(data.orderId || query.orderId || '').trim();
+  const owner = String(data.owner || query.owner || '').trim().toLowerCase();
 
-  // The user's actual order ID is 1001
-  // Any other valid order ID (1002, 1003, etc.) demonstrates IDOR
-  const userOrderId = '1001';
-  const isNumeric = /^\d+$/.test(orderId);
-  const isDifferentOrder = orderId !== userOrderId && orderId !== '';
+  const orders = loadOrders();
+  const match = orders.find(o => String(o.id) === orderId);
 
-  const isValid = isNumeric && isDifferentOrder && parseInt(orderId) >= 1000 && parseInt(orderId) <= 9999;
+  // Evidence check: the order must exist, must NOT be the student's own,
+  // and the owner they report must actually match that order.
+  const accessedOther = match && orderId !== USER_ORDER_ID;
+  const ownerProven = accessedOther && owner && String(match.user).toLowerCase() === owner;
 
-  if (isValid) {
+  if (ownerProven) {
     return sendJson(res, 200, {
       success: true,
-      message: "🎯 IDOR vulnerability successfully exploited!",
-      explanation: `You accessed order ${orderId} without authorization. This demonstrates Insecure Direct Object Reference.`,
-      nextSteps: "Try exploring API endpoints that use predictable IDs for other resources like users or documents.",
+      message: '🎯 IDOR confirmed! You read order ' + orderId + ' (owner: ' + match.user + ').',
+      explanation: 'By changing the id to ' + orderId + ' you accessed another user\'s order with no authorization check. That is Insecure Direct Object Reference.',
+      nextSteps: 'Try enumerating every id (1001-1003) and note there is no ownership check anywhere. Then look at other predictable-id endpoints.',
       points: 100,
       labId: 'idor'
     });
   }
 
-  let hint = "Try changing the order ID to access another user's order. ";
-  const attemptCount = getAttemptCount(sessionId, 'idor');
-
-  if (!isNumeric) {
-    hint += "The order ID should be numeric.";
-  } else if (orderId === userOrderId) {
-    hint += "You're viewing your own order. Try incrementing or decrementing the ID.";
-  } else if (parseInt(orderId) < 1000 || parseInt(orderId) > 9999) {
-    hint += "Try order IDs in a realistic range (1000-9999).";
+  let hint = 'Load another user\'s order, then prove what you found. ';
+  if (!orderId) {
+    hint += 'Enter an order id and click Load Order first.';
+  } else if (!match) {
+    hint += 'Order ' + orderId + ' does not exist. Valid orders are in the 1001-1003 range.';
+  } else if (orderId === USER_ORDER_ID) {
+    hint += 'That is your own order (1001). Increment the id to reach someone else\'s.';
+  } else if (!owner) {
+    hint += 'Click Load Order to retrieve order ' + orderId + ', then Validate so its owner is submitted as proof.';
   } else {
-    hint += "Make sure you're accessing a different valid order ID.";
+    hint += 'The owner you reported does not match order ' + orderId + '. Re-read the response body.';
   }
 
-  if (attemptCount > 3) {
-    hint += "\n\n💡 Need help? Check the hints in the educational content above.";
-  }
-
-  return sendJson(res, 200, {
-    success: false,
-    hint: hint,
-    attemptCount: attemptCount,
-    labId: 'idor'
-  });
+  return sendJson(res, 200, { success: false, hint: hint, labId: 'idor' });
 };

@@ -6,6 +6,7 @@
   <title>Clickjacking Lab - VulnLab Academy</title>
   <link rel="stylesheet" href="/assets/styles.css">
   <script src="/assets/app.js"></script>
+  <script src="/assets/lab-content.js"></script>
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 </head>
 <body>
@@ -22,16 +23,42 @@
     </aside>
     <main class="main">
       <h2 class="section-title">VULN-001 Clickjacking</h2>
-      <div class="lab">
+      <div class="lab" data-lab-id="clickjacking">
         <div>
           <h3>No Clickjacking Protection</h3>
-          <p>There is no X-Frame-Options or CSP frame-ancestors.</p>
-          <div class="notice mono">Try framing this page in an iframe.</div>
+          <p>The site sends no X-Frame-Options or CSP frame-ancestors, so its pages can be embedded by any other site.</p>
+          <div class="notice mono">Prove it: load one of this site's pages inside an iframe.</div>
+          <button type="button" class="validate-btn" style="margin-top:8px" onclick="attemptFrame()">Attempt to frame this site</button>
         </div>
         <div>
-          <div class="notice">Your shortcut should report missing protections.</div>
+          <div id="frame-host" class="notice mono" style="min-height:40px">The framed page will appear here if framing is allowed.</div>
+          <div id="validation-result"></div>
         </div>
       </div>
+      <script>
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', function () { attachLabContent('clickjacking'); });
+        } else {
+          attachLabContent('clickjacking');
+        }
+
+        function attemptFrame() {
+          var host = document.getElementById('frame-host');
+          host.innerHTML = '';
+          var ifr = document.createElement('iframe');
+          ifr.style.width = '100%';
+          ifr.style.height = '220px';
+          ifr.style.border = '1px solid rgba(255,255,255,0.15)';
+          ifr.src = '/home/';
+          ifr.onload = function () {
+            // Same-origin: if framing is allowed we can read the framed document.
+            var framed = false;
+            try { framed = !!(ifr.contentDocument && ifr.contentDocument.body); } catch (e) { framed = false; }
+            submitValidation('clickjacking', { framed: String(framed) }, document.getElementById('validation-result'));
+          };
+          host.appendChild(ifr);
+        }
+      </script>
     </main>
   </div>
 </body>

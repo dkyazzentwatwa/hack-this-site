@@ -2,9 +2,6 @@
   "name": "vulnerable-labs",
   "version": "0.1.0",
   "private": true,
-  "dependencies": {
-    "express": "4.16.0",
-    "jsonwebtoken": "7.4.1",
-    "lodash": "4.17.11"
-  }
+  "description": "Intentionally vulnerable educational training site. Not for production use.",
+  "license": "MIT"
 }

@@ -155,7 +155,7 @@ When working on this codebase:
 
 ### Testing
 
-No automated test suite exists. Validate changes by:
+Validator logic has unit tests in `tests/` — run `./tests/run.sh` (macOS/jsc, no install). Also validate changes by:
 1. Running locally with `npx vercel dev`
 2. Opening affected pages in browser
 3. Testing API endpoints with curl or browser console

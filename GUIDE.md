@@ -89,4 +89,4 @@ This site is intentionally insecure so students and practitioners can **practice
 
 ---
 
-If you want, I can also generate a **script‑ID index** (200+ entries) and an **auto‑generated lab catalog JSON** to power your shortcuts and reporting.
+A machine-readable lab catalog already ships in `data/lab-metadata.json` (IDs, difficulty, category, time estimates) and `data/lab-content.json` (what/why/steps/hints/fix). Point your shortcuts and reporting at those files.

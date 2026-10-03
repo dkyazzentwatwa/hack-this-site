@@ -1,5 +1,7 @@
 {
+  "cleanUrls": true,
   "rewrites": [
+    { "source": "/.git/(.*)", "destination": "/git/$1" },
     { "source": "/api/(.*)", "destination": "/api/index?path=$1" }
   ]
 }

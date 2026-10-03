@@ -1,4 +1,4 @@
-@import url(\"https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap\");
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap");
 
 :root {
   --bg: #0c0f14;
@@ -454,7 +454,11 @@ button {
 }
 
 @media (max-width: 980px) {
-  .layout {
+  .layout,
+  body.sidebar-collapsed .layout {
+    /* Sidebar is a fixed overlay on mobile, so the grid is a single full-width
+       column. This must also beat `body.sidebar-collapsed .layout { 0 1fr }`,
+       otherwise .main falls into the leftover 0px track and collapses. */
     grid-template-columns: 1fr;
   }
 
